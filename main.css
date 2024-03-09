@@ -1,0 +1,157 @@
+body {
+    background-color: #111;
+}
+
+#Main {
+    background-color: #111;
+    position: fixed;
+    height: 100%;
+    width: 90%;
+    z-index: 1;
+}
+
+#MainTransition {
+    background-color: #111;
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 0;
+    opacity: 100%;
+    transition: opacity 0.3s linear;
+}
+
+#Sidebar {
+    background-color: #333;
+    position: fixed;
+    height: 100%;
+    width: 300px;
+    z-index: 2;
+}
+
+.SidebarText {
+    color: white;
+    font-family: Verdana;
+    width: 300px;
+    margin-top: 5%;
+    font-size: 30px;
+    text-align: center;
+}
+
+.TopbarText {
+    color: white;
+    font-family: Verdana;
+    font-size: 25px;
+    display: inline;
+    padding: 50px;
+}
+
+#GameTitle {
+    position: absolute;
+    text-align: center;
+    width: 300px;
+    top: 2%;
+    font-size: 30px;
+}
+
+#SidebarToggle {
+    position: fixed;
+    left: 307px;
+    top: 35px;
+    font-size: 60px;
+    width: 70px;
+    height: 70px;
+    padding: 0;
+    border: 0;
+    background-color: #222;
+    color: white;
+    font-weight: bold;
+    font-family: Monospace;
+    z-index: 2;
+}
+
+#Topbar {
+    position: fixed;
+    width: 100%;
+    height: 28px;
+    top: 0;
+    background-color: #333;
+    display: inline;
+    z-index: 2;
+}
+
+.MainText {
+    position: relative;
+    left: 50px;
+    top: 100px;
+    font-family: Verdana;
+    display: inline;
+    white-space: pre-line;
+    font-size: 30px;
+    line-height: 40px;
+}
+.MainLink {
+    color: #518ae0;
+    border: 0;
+    background: none;
+    padding: 0;
+    outline: none;
+    position: relative;
+    left: 50px;
+    top: 100px;
+    font-family: Verdana;
+    font-size: 30px;
+    display: inline;
+}
+
+#SidebarButtons {
+    position: fixed;
+    top: 50%;
+    color: black;
+}
+
+.SidebarButtons {
+    display: block;
+    color: white;
+    background-color: black;
+    border: 0;
+    font-family: Verdana;
+    width: 290px;
+    font-size: 30px;
+    position: relative;
+    left: 5px;
+    margin-bottom: 10px;
+    text-align: center;
+}
+
+
+#SidebarStats {
+    position: fixed;
+    top: 100px;
+}
+
+#Inventory {
+    background-color: #333;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    width: 30%;
+    height: 60%;
+    z-index: 10;
+    text-align: center;
+    font-family: Verdana;
+    font-size: 30px;
+    color: white;
+    display: none;
+}
+
+#InventoryItems {
+    display: block;
+}
+
+.InventoryText {
+    color: white;
+    font-family: Verdana;
+    font-size: 16px;
+    display: block;
+}
