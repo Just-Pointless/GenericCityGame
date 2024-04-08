@@ -1,7 +1,7 @@
 <head>
     <title>Generic City Game</title>
     <script src="jquery.js"></script>
-    <script src="main.js"></script>
+    <script src="main.js" defer></script>
     <link rel="stylesheet" href="main.css">
 </head>
 
@@ -11,7 +11,7 @@
     </div>
     <div id="MainTransition"></div>
     <div id="Sidebar">
-        <div class="SidebarText" id="GameTitle">GCG v0.3.1</div>
+        <div class="SidebarText" id="GameTitle">GCG v0.9.0</div>
         <div id="SidebarStats">
             <div class="SidebarText" id="SidebarFatigue">Fatigue: 0/100</div>
             <div class="SidebarText" id="SidebarHealth">Health: 100/100</div>
@@ -19,11 +19,13 @@
         <div id="SidebarButtons">
             <button class="SidebarButtons" id="StatsButton">Stats</button>
             <button class="SidebarButtons" id="InventoryButton">Inventory</button>
+            <button class="SidebarButtons" id="SavesButton">Saves</button>
         </div>
     </div>
     <div id="Topbar">
         <div class="TopbarText" id="Money">$0</div>
-        <div class="TopbarText" id="Clock">7:00</div>
+        <div class="TopbarText" id="Clock">07:00</div>
+        <div class="TopbarText" id="Day">Day: 1 Sat</div>
     </div>
     <button id="SidebarToggle">&lt;</button>
 
@@ -32,6 +34,18 @@
             <div id="InventoryItems">
 
             </div>
+        </div>
+        
+        <div id="Stats">Stats
+            <div id="StatItems">
+                <div id="STAT_day" class="PopupText">Day: 1</div>
+            </div>
+        </div>
+
+        <div id="Saves">Saves
+            <button class="UiLink" id="ExportSave">Export Save</button>
+            <button class="UiLink" id="ImportSave">Import Save</button>
+            <input type="text" id="SaveText">
         </div>
     </div>
 </body>
