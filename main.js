@@ -133,6 +133,11 @@ function ChangeStat(stat, amount) {
         } else {
             Stats['Health'] = 100
         }
+        if (Stats['Health'] <= 0) {
+            document.getElementById("SidebarHealth").style.color = "Red"
+        } else {
+            document.getElementById("SidebarHealth").style.color = "White"
+        }
         document.getElementById("SidebarHealth").textContent = "Health: " + Math.round(Stats['Health']) + "/100"
     }
 }
@@ -428,7 +433,7 @@ class scenes {
     }
 
     HomeLaptopBrowseMenu() {
-        return "{News (10m)|HomeLaptop|10|ReadNews()}\n\n{Turn off|Home|0}"
+        return "{News (10m)|HomeLaptop|10|NewsManager(Digital)}\n\n{Turn off|Home|0}"
     }
 
     ApartmentHall() {
@@ -458,7 +463,11 @@ class scenes {
     }
     
     MeadowbrookStreet() {
-        return "You are on Meadowbrook Street, a slightly poorer part of town. There's very few cars on this road. You hear the distant hum of traffic.\n\n{Apartment block (1m)|ApartmentHall|1}\n{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
+        let Temp1 = ""
+        if (Time > 360 && Time < 900 && Day >= 2) {
+            Temp1 = "{Buy newspaper ($2)|Empty|5|NewsManager(Paper)}\n"
+        }
+        return "You are on Meadowbrook Street, a slightly poorer part of town. There's very few cars on this road. You hear the distant hum of traffic.\n\n{Apartment block (1m)|ApartmentHall|1}\n" + Temp1 + "{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
     }
     
     ConvenienceStore() {
@@ -782,7 +791,7 @@ class scenes {
     }
     
     MarketStreet() {
-        return "You are on Market Street. You can sell items in your inventory here.\n\n{Fruit Buyer (2m)|MarketStreetFruitBuyer|2|StallLoader(MarketStreetFruitBuyer)}\n\n{Shoreline Street (5m)|ShorelineStreet|5}\n{Crestwood Street (10m)|CrestwoodStreet|10}"
+        return "You are on Market Street. You can sell items in your inventory here.\n\n{Fruit Buyer (2m)|MarketStreetFruitBuyer|2|StallLoader(MarketStreetFruitBuyer)}\n\n{Shoreline Street (5m)|ShorelineStreet|5}\n{Maple Street (5m)|MapleStreet|5}\n{Crestwood Street (10m)|CrestwoodStreet|10}"
     }
 
     MarketStreetFruitBuyer() {
@@ -815,6 +824,18 @@ class scenes {
 
     Empty() { // Special scene that returns nothing (usually controlled by scene functions)
        return "" 
+    }
+
+    MapleStreet() {
+        return "You are on Maple Street. You can access the hospital from here.\n\n{Hospital (2m)|Hospital|2}\n\n{Market Street (5m)|MarketStreet|5}"
+    }
+
+    Hospital() {
+        return "You are in the hospital. Multiple doctors are running between rooms.\n\n{Leave (2m)|MapleStreet|2}"
+    }
+
+    HospitalInRoom() {
+        return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
     }
     
 }
@@ -1175,6 +1196,9 @@ class SceneFunctions {
             }
             Money += gain
             return
+        } else if (Stats['Health'] <= 0) {
+            EndText += "You lost\n\n{Next (2h)|HospitalInRoom|120}"
+            return
         }
         LoadCombatButtons(FinalArgs)
     }
@@ -1205,9 +1229,19 @@ class SceneFunctions {
             ExtraText = "You cancelled your wifi subscription\n\n"
         }
     }
-    
-    ReadNews() {
-        ExtraText = "There is nothing interesting on the news right now.\n\n"
+
+    NewsManager(NewsType) {
+        if (NewsType == "Digital") {
+            ExtraText = "There is nothing interesting on the news right now.\n\n"
+        } else {
+            if (Money >= 2) {
+                ExtraText = "You buy a newspaper and read it.\n\n"
+                EndText = "There is nothing interesting right now\n\n{Next|MeadowbrookStreet|0}"
+                Money -= 2
+            } else {
+                ExtraText = "You do not have enough money to purchase a newspaper.\n\n{Back|MeadowbrookStreet|0}"
+            }
+        }
     }
 }
 const scene = new scenes()
