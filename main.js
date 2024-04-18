@@ -11,6 +11,7 @@ var EndText = ""
 var Stats = {"Fatigue": 0, "Health": 100}
 var Debt = 10000
 var DebtDue = 0
+const DebtScaling = [0, 100, 200, 300, 500, 750, 1000, 1250, 1500, 1750, 2000, 650]
 var Tutorials = {}
 var Skills = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0}
 var SkillXp = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0}
@@ -44,6 +45,7 @@ const PresetEnemies = {
 const EnemyDrops = {"Thug": {"MoneyMin": 20, "MoneyMax": 50}}
 var HomeUpgrades = {}
 var DailySubs = {}
+var Checks = {}
 // Medal stuff later when more content
 //var Medals = {"$10": false, "$100": false, "$1000": false}
 //var MedalDesc = {"$10": "Get 10 dollars", "$100": "Get 100 dollars", "$1000": "Get 1000 dollars"}
@@ -67,7 +69,10 @@ function ChangeTime(amount) {
         WeekDay += 1
                     
         if (WeekDay >= 8) {
-            DebtDue = DebtScaling[Math.floor(YearDay / 7)]
+            if (DebtDue != 0) {
+                Checks['BankDebt'] = true
+            }
+            DebtDue += DebtScaling[Math.floor(YearDay / 7)]
             WeekDay = 1
         }
         document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
@@ -91,7 +96,11 @@ function ChangeTime(amount) {
 
 function GetTimeName(person) {
     if (Time < 360) {
-        return "night"
+        if (person == false) {
+            return "night"
+        } else {
+            return "evening"
+        }
     } else if (Time < 721) {
         return "morning"
     } else if (Time < 1081) {
@@ -116,11 +125,7 @@ function GetDayName() {
 
 function ChangeStat(stat, amount) {
     if (stat == "Fatigue") {
-        if (Stats['Fatigue'] + amount >= 0) {
-            Stats['Fatigue'] += amount
-        } else {
-            Stats['Fatigue'] = 0
-        }
+        Stats['Fatigue'] = Math.max(Stats['Fatigue'] + amount, 0)
         document.getElementById("SidebarFatigue").textContent = "Fatigue: " + Math.round(Stats['Fatigue']) + "/100"
         if (Stats['Fatigue'] > 100) {
             document.getElementById("SidebarFatigue").style.color = "Red"
@@ -128,11 +133,7 @@ function ChangeStat(stat, amount) {
             document.getElementById("SidebarFatigue").style.color = "White"
         }
     } else if (stat == "Health") {
-        if (Stats['Health'] + amount <= 100) {
-            Stats['Health'] += amount
-        } else {
-            Stats['Health'] = 100
-        }
+        Stats['Health'] = Math.min(Stats['Health'] + amount, 100)
         if (Stats['Health'] <= 0) {
             document.getElementById("SidebarHealth").style.color = "Red"
         } else {
@@ -437,15 +438,20 @@ class scenes {
     }
 
     ApartmentHall() {
-        if (Tutorials['Banker'] == true) {
-            if (Day >= 3) {
-                return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
-            } else {
-                return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
-            }
+        if (Checks['BankDebt'] == true) {
+            delete Checks['BankDebt']
+            return "A banker approaches you.\n\n\"Good " + GetTimeName(true) + ", I'm here to remind you that your weekly debt payment is overdue. This will negatively affect your reputation so I recommend paying it off as soon as possible. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + "\"\n\n{Next|ApartmentHall|0}"
         } else {
-            Tutorials['Banker'] = true
-            return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ", You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
+            if (Tutorials['Banker'] == true) {
+                if (Day >= 3) {
+                    return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                } else {
+                    return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                }
+            } else {
+                Tutorials['Banker'] = true
+                return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ", You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
+            }
         }
     }
     
@@ -528,8 +534,8 @@ class scenes {
     
     OfficeReceptionist() {
         if (Jobs['Office'] == undefined) {
-            if (Skills['Communication'] < 5 && Skills['Math'] < 2) {
-                return "\"Good " + GetTimeName(true) + ", how may I assist you today?\"\n\n" + ColorGen("ffa500", "Requires: Communication 5 and Math 2") + "\n\n{Leave|Office|0}"
+            if (Skills['Communication'] < 4 && Skills['Math'] < 2) {
+                return "\"Good " + GetTimeName(true) + ", how may I assist you today?\"\n\n" + ColorGen("ffa500", "Requires: Communication 4 and Math 2") + "\n\n{Leave|Office|0}"
             } else {
                 return "\"Good " + GetTimeName(true) + ", how may I assist you today?\"\n\n{Inquire about work (1m)|OfficeWO1|1}\n\n{Leave|Office|0}" 
             }
