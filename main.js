@@ -1,3 +1,9 @@
+/* 
+Hi uh if your reading this im assuming you are gonna look through the code
+Anyway just a few things to note
+1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
+2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
+*/
 // VARIABLES
 var Money = 0
 var Time = 420
@@ -71,12 +77,15 @@ function ChangeTime(amount) {
         if (WeekDay >= 8) {
             if (DebtDue != 0) {
                 Checks['BankDebt'] = true
+                Checks['BankDebtNotice'] = true
             }
             DebtDue += DebtScaling[Math.floor(YearDay / 7)]
             WeekDay = 1
         }
         document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
-
+        if (HomeUpgrades['CryptoMiner'] != undefined) {
+            Money += HomeUpgrades['CryptoMiner'] * 30
+        }
         for (var key of Object.keys(DailySubs)) {
             if (Money - DailySubs[key] < 0) {
                 delete DailySubs[key]
@@ -303,6 +312,11 @@ function GetSave() {
     SaveTable['OfficePromotionXP'] = OfficePromotionXP
     SaveTable['OldScene'] = OldScene
     SaveTable['CurrentScene'] = CurrentScene
+    SaveTable['Secrets'] = Secrets
+    SaveTable['Enemy'] = Enemy
+    SaveTable['Checks'] = Checks
+    SaveTable['HomeUpgrades'] = HomeUpgrades
+    SaveTable['DailySubs'] = DailySubs
     document.getElementById("SaveText").value = btoa(JSON.stringify(SaveTable))
 }
 
@@ -327,6 +341,11 @@ function LoadSave() {
     OfficePromotionXP = SaveTable['OfficePromotionXP']
     OldScene = SaveTable['OldScene']
     CurrentScene = SaveTable['CurrentScene']
+    Secrets = SaveTable['Secrets']
+    Enemy = SaveTable['Enemy']
+    Checks = SaveTable['Checks']
+    HomeUpgrades = SaveTable['HomeUpgrades']
+    DailySubs = SaveTable['DailySubs']
     document.getElementById("STAT_day").textContent = "Day: " + Day
     document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
     SceneManager(CurrentScene)
@@ -410,23 +429,23 @@ class scenes {
     }
     
     Tutorial() {
-        return "Welcome to Generic City Game.\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nThats about it press the blue text below to continue.\n{Next|Home|0}"
+        return "Welcome to Generic City Game.\nImportant reminder that this game is not finished yet so there may be changes made in the future. You also have to manually save for now (intentional)\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nThats about it press the blue text below to continue.\n{Next|Home|0}"
     }
     
     Home() {
-        let Temp1 = ""
-        if (HomeUpgrades['Laptop'] == true) {
-            Temp1 = "\n{Laptop|HomeLaptop|0}"
-        }
-        return "You are in your apartment its currently " + GetDayName() + " " + GetTimeName(false) + ".\n\n{Sleep|Sleep|0}" + Temp1 + "\n\n{Leave (1m)|ApartmentHall|1}"
+        let r = "You are in your apartment its currently " + GetDayName() + " " + GetTimeName(false) + ".\n\n{Sleep|Sleep|0}"
+        r += HomeUpgrades['Laptop'] == true ? "\n{Laptop|HomeLaptop|0}" : ""
+        r += HomeUpgrades['CryptoMiner'] > 0 ? "\n{Crypto Miners|HomeCryptoMiner|0}" : ""
+        r += "\n\n{Leave (1m)|ApartmentHall|1}"
+        return r
     }
     
-    HomeLaptop() { // TODO: Add wifi and an option to browse the internet
+    HomeLaptop() {
         let Temp1 = "You open your laptop and turn it on. "
         if (CurrentScene == "HomeLaptopBrowseMenu") {
             Temp1 = ""
         }
-        if (DailySubs['Wifi'] == true) {
+        if (DailySubs['Wifi']) {
             return Temp1 + "What would you like to do?\n\n{Browse the internet|HomeLaptopBrowseMenu|0}\n\n{Turn off|Home|0}"
         } else {
             return Temp1 + "What would you like to do?\n\n" + ColorGen("ffa500", "You need a wifi subscription to browse the internet") + "\n\n{Turn off|Home|0}"    
@@ -437,17 +456,28 @@ class scenes {
         return "{News (10m)|HomeLaptop|10|NewsManager(Digital)}\n\n{Turn off|Home|0}"
     }
 
+    HomeCryptoMiner() {
+        return "Your crypto miners are earning you " + ColorGen("006400", "$" + HomeUpgrades['CryptoMiner'] * 30) + " per day\n\n{Back|Home|0}"
+    }
+
     ApartmentHall() {
-        if (Checks['BankDebt'] == true) {
-            delete Checks['BankDebt']
+        if (Checks['BankDebtNotice'] == true) {
+            delete Checks['BankDebtNotice']
             return "A banker approaches you.\n\n\"Good " + GetTimeName(true) + ", I'm here to remind you that your weekly debt payment is overdue. This will negatively affect your reputation so I recommend paying it off as soon as possible. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + "\"\n\n{Next|ApartmentHall|0}"
         } else {
             if (Tutorials['Banker'] == true) {
                 if (Day >= 3) {
-                    return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                    if (Tutorials['SteveIntro']) {
+                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Steve's apartment (1m)|ApartmentSteveRoom|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                    } else {
+                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                    }
                 } else {
                     return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                 }
+            } else if (Day >= 5 && !Tutorials['SteveIntro']) {
+                Tutorials['SteveIntro'] = true
+                return "A tall man with glasses approaches you.\n\n\"Hello, my name is Steve. I noticed that you recently moved in so i brought some gifts for you. Feel free to knock on my door any time if you need help with anything.\"\n\n{Next|ApartmentHall|0}"
             } else {
                 Tutorials['Banker'] = true
                 return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ", You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
@@ -462,7 +492,23 @@ class scenes {
             return "You have a letter from your school\n\n{Read (10m)|SchoolLetter1|10}\n\n{Back|ApartmentHall|0}"
         }
     }
+
+    ApartmentSteveRoom() {
+        return "You knock on steve's door and enter his apartment.\n\n{Talk (10m)|Empty|10|SteveTalk}\n{Ask question|ApartmentSteveRoomQuestion|0}\n\n{Leave (1m)|ApartmentHall|1}" // TODO: Better description
+    }
+
+    ApartmentSteveRoomQuestion() {
+        if (Checks['SteveCryptoQuestion']) {
+            return "{Ask about crypto mining (20m)|ApartmentSteveRoomCryptoIntro|0}\n\n{Back|ApartmentSteveRoom|0}"    
+        }
+        return "You have nothing to ask him right now.\n\n{Back|ApartmentSteveRoom|0}"
+    }
     
+    ApartmentSteveRoomCryptoIntro() {
+        Tutorials['SteveCrypto'] = true
+        return "\"Alright, you can buy them from the " + ColorGen("ffd700", "Technology Store") + ".\"\nAfter that steve shows you how to use them.\n\n{Next|ApartmentSteveRoom|0}"
+    }
+
     SchoolLetter1() {
         Tutorials['School'] = true
         return "You open the letter and read: \"We hope this letter finds you well. This is a friendly reminder that the new academic term at Oxford School begins tomorrow.\n\nDirections from your home on Meadowbrook Street to our campus are listed below.\nMeadowbrook Street -> Lunar Road -> Oxford Street\n\nPlease do not hesitate to contact us if you have any questions or need further assistance.\"\n\n{Next|ApartmentHall|0}"
@@ -623,18 +669,25 @@ class scenes {
     }
     
     TechnologyStore() {
-        let Temp1 = ""
-        if (HomeUpgrades['Laptop'] == undefined) {
-            Temp1 = "{Buy Laptop ($300)|TechnologyStore|1|TechnologyStoreBuy(Laptop)}\n\n"
-        }
-        return "You are in the technology store. There are expensive laptops and phones being displayed on the walls.\n\n" + Temp1 + "{Leave (2m)|CrestwoodStreet|2}"
+        let r = "You are in the technology store. There are expensive laptops and phones being displayed on the walls.\n\n"
+        r += HomeUpgrades['Laptop'] == undefined ? "{Buy Laptop ($300)|TechnologyStore|1|TechnologyStoreBuy(Laptop)}\n\n" : ""
+        r += Tutorials['SteveCrypto'] ? "{Ask about crypto miners (10m)|TechnologyStoreCryptoRoom|10}\n\n" : ""
+        r += "{Leave (2m)|CrestwoodStreet|2}"
+        return r
+    }
+
+    TechnologyStoreCryptoRoom() {
+        let r = "You wait for the cashier to finish selling a laptop to a customer. You ask the cashier if they sell crypto miners.\n\n\"Yes we do sell them. They are not displayed in the front of the store as they are not bought frequently.\"\nHe then leads you to the back of the store.\n\n"
+        r += HomeUpgrades['CryptoMiner'] >= 10 ? ColorGen("d90202", "You can't fit anymore crypto miners\n\n") : "{Buy a crypto miner ($1000)|TechnologyStoreCryptoRoom|1|CryptoMinerBuy}\n\n"
+        r += "{Leave|TechnologyStore|0}"
+        return r
     }
 
     LunarRoad() {
         if (Time < 60) {
-            return "You are on Lunar Road. There appears to be nothing besides a forest nearby. You notice a faint beam of light pointing towards a manhole cover\n\n{Walk towards the beam of light (1m)|LunarRoadManholeCover1|1}\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}"
+            return "You are on Lunar Road. There appears to be nothing besides a forest nearby. You notice a faint beam of light pointing towards a manhole cover\n\n{Walk towards the beam of light (1m)|LunarRoadManholeCover1|1}\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Rockefeller Street (10m)|RockefellerStreet|10}"
         } else {
-            return "You are on Lunar Road. There appears to be nothing besides a forest nearby.\n\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}"
+            return "You are on Lunar Road. There appears to be nothing besides a forest nearby.\n\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Rockefeller Street (10m)|RockefellerStreet|10}"
         }
     }
     
@@ -821,7 +874,7 @@ class scenes {
     }
 
     WifiShopKiosk() {
-        if (DailySubs['Wifi'] == true) {
+        if (DailySubs['Wifi']) {
             return "{Cancel subscription|WifiShop|1|BuyWifiSub(Cancel)}\n\n{Leave|WifiShop|0}"
         } else {
             return "{Buy wifi subscription ($10/day)|WifiShop|1|BuyWifiSub(Buy)}\n\n{Leave|WifiShop|0}"
@@ -842,6 +895,14 @@ class scenes {
 
     HospitalInRoom() {
         return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
+    }
+
+    RockefellerStreet() { // TODO: Add pub
+        if (Time >= 1140 || Time <= 240) {
+            return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to the large pub on the side of the road.\n\n{Lunar Road (10m)|LunarRoad|10}"
+        } else {
+            return "You are on Rockefeller Street. It's quite empty right now and all the shops here are closed.\n\n{Lunar Road (10m)|LunarRoad|10}"
+        }
     }
     
 }
@@ -1221,11 +1282,11 @@ class SceneFunctions {
         }
     }
 
-    BuyWifiSub(NotSureWhatToNameThIsArgument) {
-        if (NotSureWhatToNameThIsArgument == "Buy") {
+    BuyWifiSub(NotSureWhatToNameThisArgument) {
+        if (NotSureWhatToNameThisArgument == "Buy") {
             if (Money >= 10) {
                 Money -= 10
-                DailySubs['Wifi'] = true
+                DailySubs['Wifi'] = 10
                 ExtraText = "You bought a wifi subscription. You need a laptop to use it.\n\n"
             } else {
                 ExtraText = "You don't have enough money to buy a subscription\n\n"
@@ -1237,16 +1298,48 @@ class SceneFunctions {
     }
 
     NewsManager(NewsType) {
-        if (NewsType == "Digital") {
-            ExtraText = "There is nothing interesting on the news right now.\n\n"
-        } else {
+        //if (NewsType == "Digital") {
+            //ExtraText = "There is nothing interesting on the news right now.\n\n"
+        if (NewsType == "Paper") {
             if (Money >= 2) {
-                ExtraText = "You buy a newspaper and read it.\n\n"
-                EndText = "There is nothing interesting right now\n\n{Next|MeadowbrookStreet|0}"
                 Money -= 2
             } else {
                 ExtraText = "You do not have enough money to purchase a newspaper.\n\n{Back|MeadowbrookStreet|0}"
+                return
             }
+        }
+        
+        if (Day < 5) {
+            ExtraText = "The job market has witnessed a rapid growth in available jobs in various sectors. A significant amount of these positions are low paying.\n\n" + ColorGen("757b94", "(The news changes every few days)") + "\n\n"
+        } else {
+            ExtraText = "There is nothing interesting on the news right now\n\n"
+        }
+        
+        if (NewsType == "Paper") {
+            EndText = ExtraText + "{Next|MeadowbrookStreet|0}"
+            ExtraText = "You buy a newspaper and read it.\n\n"
+        }
+    }
+
+    SteveTalk() {
+        let rng = GetRng()
+        if (rng <= 1000) {
+            Checks['SteveCryptoQuestion'] = true
+            ExtraText = "Steve shows you his cryptocurrency miners.\n\n\"It's my method of earning money passively. They are my main source of income so I don't need to work. These give me some freedom to pursue other interests. I can tell you where to buy them and how to use them if you want.\"\n\n{Yes (20m)|ApartmentSteveRoomCryptoIntro|20}\n{Maybe later|ApartmentSteveRoom|0}"
+        }
+    }
+
+    CryptoMinerBuy() {
+        if (Money >= 1000) {
+            if (HomeUpgrades['CryptoMiner']) {
+                HomeUpgrades['CryptoMiner'] += 1
+            } else {
+                HomeUpgrades['CryptoMiner'] = 1
+            }
+            ExtraText = "You bought a crypto miner. You have " + HomeUpgrades['CryptoMiner'] + " crypto miner(s)\n\n"
+            Money -= 1000
+        } else {
+            ExtraText = "You do not have enough money to purchase a crypto miner."
         }
     }
 }
