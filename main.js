@@ -4,6 +4,8 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
+const Version = "0.11.0"
+document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
 var Time = 420
@@ -14,7 +16,7 @@ var TotalTime = 420
 var Jobs = {}
 var ExtraText = ""
 var EndText = ""
-var Stats = {"Fatigue": 0, "Health": 100}
+var Stats = {"Fatigue": 0, "Health": 100, "Alcohol": 0}
 var Debt = 10000
 var DebtDue = 0
 const DebtScaling = [0, 100, 200, 300, 500, 750, 1000, 1250, 1500, 1750, 2000, 650]
@@ -27,6 +29,7 @@ const ItemData = {"RedBerry": {"Name": "Red Berries", "Usable": false}, "BlueBer
 var InventoryHidden = true
 var StatsHidden = true
 var SavesHidden = true
+var AchievementsHidden = true
 var OfficeRank = 0
 var OfficePromotionXP = 0
 var OfficeRanks = [
@@ -52,9 +55,29 @@ const EnemyDrops = {"Thug": {"MoneyMin": 20, "MoneyMax": 50}}
 var HomeUpgrades = {}
 var DailySubs = {}
 var Checks = {}
+var Counts = {}
+var LinkSceneOverride = false
 // Medal stuff later when more content
-//var Medals = {"$10": false, "$100": false, "$1000": false}
-//var MedalDesc = {"$10": "Get 10 dollars", "$100": "Get 100 dollars", "$1000": "Get 1000 dollars"}
+var Achievements = []
+const AchievementData = {
+    "Pocket Change": {"Desc": "Reach $10"},
+    "Getting Somewhere": {"Desc": "Reach $100"},
+    "Money Maker": {"Desc": "Reach $1000"},
+    "Rich": {"Desc": "Reach $100k"},
+    "Millionaire": {"Desc": "Reach $1m"},
+    "Manager": {"Desc": "Reach the manager job in the office"},
+    "First Blood": {"Desc": "Defeat 1 enemy"},
+    "Skilled Fighter": {"Desc": "Defeat 10 enemies"},
+    "Decimator": {"Desc": "Defeat 50 enemies"},
+    "Annihilation": {"Desc": "Defeat 200 enemies"},
+    "Caver": {"Desc": "Discover the crystal caves", "Secret": true},
+    "Flatline": {"Desc": "Defeat an enemy in one hit"},
+    "Passive Income": {"Desc": "Buy a crypto miner"},
+}
+
+const AchievementRegex = new RegExp("[a-zA-Z0-9]", "g")
+const re = new RegExp("\\{([^|{}]+)\\|([^|{}]+)\\|([0-9]+)\\|?([^|{}(]+)?\\(?([^(){}|]+)?\\)?\\}", "g")
+const re2 = new RegExp("{[^}]{1,}}", "g")
 
 // STAT MENU SETUP
 for (var key of Object.keys(Skills)) {
@@ -84,13 +107,13 @@ function ChangeTime(amount) {
         }
         document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
         if (HomeUpgrades['CryptoMiner'] != undefined) {
-            Money += HomeUpgrades['CryptoMiner'] * 30
+            ChangeMoney(HomeUpgrades['CryptoMiner'] * 30)
         }
         for (var key of Object.keys(DailySubs)) {
             if (Money - DailySubs[key] < 0) {
                 delete DailySubs[key]
             } else {
-                Money -= DailySubs[key]
+                ChangeMoney(DailySubs[key] * -1)
             }
         }
     } else {
@@ -98,6 +121,7 @@ function ChangeTime(amount) {
     }
     TotalTime += amount
     ChangeStat("Health", amount / 60)
+    ChangeStat("Alcohol", amount * -1 / 10)
     let m = Time % 60
     let h = (Time-m)/60
     document.getElementById("Clock").textContent = (h < 10 ? "0" : "") + h.toString() + ":" + (m < 10 ? "0" : "") + m.toString()
@@ -149,6 +173,41 @@ function ChangeStat(stat, amount) {
             document.getElementById("SidebarHealth").style.color = "White"
         }
         document.getElementById("SidebarHealth").textContent = "Health: " + Math.round(Stats['Health']) + "/100"
+    } else if (stat == "Alcohol") {
+        Stats['Alcohol'] = Math.max(0, Stats['Alcohol'] + amount)
+        if (Stats['Alcohol'] >= CalcAlcoholTolerance()) {
+            document.getElementById("SidebarAlcohol").style.color = "Red"
+        } else {
+            document.getElementById("SidebarAlcohol").style.color = "White"
+        }
+
+        if (Stats['Alcohol'] > 0) {
+            document.getElementById("SidebarAlcohol").style.display = "block"
+        } else {
+            document.getElementById("SidebarAlcohol").style.display = "none"
+        }
+
+        if (Stats['Alcohol'] >= CalcAlcoholTolerance() * 1.5) {
+            ExtraText = "You pass out from drinking too much alcohol.\n\n{Next (2h)|HospitalInRoom|120}"
+            LinkSceneOverride = true
+            SceneManager("Empty")
+        }
+
+        document.getElementById("SidebarAlcohol").textContent = "Alcohol: " + Math.round(Stats['Alcohol']) + "/" + Math.round(CalcAlcoholTolerance())
+    }
+}
+
+function CalcAlcoholTolerance() {
+    if (Counts['BeerDrunk']) {
+        if (Counts['BeerDrunk'] <= 20) {
+            return 30 + BetterLog(3, Counts['BeerDrunk']) * 20
+        } else if (Counts['BeerDrunk'] > 20 && Counts['BeerDrunk'] <= 100) {
+            return 18.1 + BetterLog(2.5, Counts['BeerDrunk']) * 20
+        } else {
+            return 1.6 + BetterLog(2.2, Counts['BeerDrunk']) * 20
+        }
+    } else {
+        return 30
     }
 }
 
@@ -200,6 +259,14 @@ function ChangeInventory(item, increment) {
     console.log(Inventory)
 }
 
+function ChangeCount(val, increment) {
+    if (Counts[val]) {
+        Counts[val] += increment
+    } else {
+        Counts[val] = increment 
+    }
+}
+
 function GetNextClass() {
     if (Time < 585) {
         return "Science"
@@ -220,8 +287,6 @@ function GetNextClass() {
 
 function TextLoader(text) {
     var Main = document.getElementById("Main")
-    var re = new RegExp("\\{([^|{}]+)\\|([^|{}]+)\\|([0-9]+)\\|?([^|{}(]+)?\\(?([^(){}|]+)?\\)?\\}", "g")
-    var re2 = new RegExp("{[^}]{1,}}", "g")
     var SplitText = text.split(re2)
     var SplitLinks = []
     do {
@@ -257,7 +322,11 @@ function TextLoader(text) {
                         scenefunctions[SplitLinks[num][4]]()  
                     }
                 }
-                SceneManager(SplitLinks[num][2])
+                if (LinkSceneOverride == false) {
+                    SceneManager(SplitLinks[num][2])
+                } else {
+                    LinkSceneOverride = false
+                }
                 document.getElementById("MainTransition").style.zIndex = 2
                 document.getElementById("MainTransition").style.opacity = 0
                 setTimeout(function() {
@@ -412,6 +481,29 @@ function SetupPresetEnemy(preset) {
 function LoadCombatButtons(argstring) {
     let CombatStr = "\n{Punch|Empty|2|CombatManager(" + argstring + ",Punch)}\n{Kick|Empty|2|CombatManager(" + argstring + ",Kick)}"
     EndText += CombatStr
+}
+
+function BetterLog(base, num) {
+    return Math.log(num) / Math.log(base)
+}
+
+function AwardAchievement(name) {
+    Achievements.push(name)
+    document.getElementById(name.replace(" ", "-")).firstChild.style.color = "#36a854"
+    document.getElementById(name.replace(" ", "-")).lastChild.style.color = "#36a854"
+    if (AchievementData[name]['Secret'] != undefined) {
+        document.getElementById(name.replace(" ", "-")).firstChild.textContent = name
+        document.getElementById(name.replace(" ", "-")).lastChild.textContent = AchievementData[name]['Desc']
+    }
+}
+
+function ChangeMoney(amount) {
+    Money += amount
+    if (Money >= 10) {AwardAchievement("Pocket Change")}
+    if (Money >= 100) {AwardAchievement("Getting Somewhere")}
+    if (Money >= 1000) {AwardAchievement("Money Maker")}
+    if (Money >= 100000) {AwardAchievement("Rich")}
+    if (Money >= 1000000) {AwardAchievement("Millionaire")}
 }
 
 // SCENES
@@ -613,7 +705,7 @@ class scenes {
 
     OfficeWorkEnd() {
         OfficePromotionXP += 8
-        Money += 8 * OfficeRanks[OfficeRank]['Pay']
+        ChangeMoney(8 * OfficeRanks[OfficeRank]['Pay'])
         if (OfficeRanks[OfficeRank]['Promotion'] <= OfficePromotionXP) {
             EndText = "\n\nYou can request for a promotion the next time you work if you have the required skills"
         }
@@ -624,6 +716,9 @@ class scenes {
         if (SkillCheck(OfficeRanks[OfficeRank + 1]['Skills']).length == 0) {
             OfficePromotionXP = 0
             OfficeRank += 1
+            if (OfficeRank == 6) {
+                AwardAchievement("Manager")
+            }
             return "You head towards a futuristic looking device that tracks your hours worked and your performance. You have automatically been promoted to \"" + OfficeRanks[OfficeRank]['Title'] + "\". You can begin working now\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         } else {
             var SkillsRequired = SkillCheck(OfficeRanks[OfficeRank + 1]['Skills'])
@@ -899,10 +994,14 @@ class scenes {
 
     RockefellerStreet() { // TODO: Add pub
         if (Time >= 1140 || Time <= 240) {
-            return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to the large pub on the side of the road.\n\n{Lunar Road (10m)|LunarRoad|10}"
+            return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to the large pub on the side of the road.\n\n{Pub (3m)|Pub|3}\n\n{Lunar Road (10m)|LunarRoad|10}"
         } else {
             return "You are on Rockefeller Street. It's quite empty right now and all the shops here are closed.\n\n{Lunar Road (10m)|LunarRoad|10}"
         }
+    }
+
+    Pub() {
+        return "You are in the pub. It's quite busy right now. You can buy beer here.\n\n{Buy Beer ($10)|Pub|2|PubAction(Beer)}\n\n{Rockefeller Street (3m)|RockefellerStreet|3}"
     }
     
 }
@@ -914,7 +1013,7 @@ class SceneFunctions {
     
     ConvenienceStoreWork() {
         let rng = GetRng()
-        Money += 3
+        ChangeMoney(3)
         ChangeStat("Fatigue", 7)
         ChangeXp("Communication", 3)
         if (rng < 100) {
@@ -938,7 +1037,7 @@ class SceneFunctions {
                 } else {
                     ExtraText = "You bought coffee for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n\n")
                 }
-                Money -= 10
+                ChangeMoney(-10)
             } else {
                 ExtraText = "You don't have enough money to purchase this item\n\n"
             }
@@ -952,7 +1051,7 @@ class SceneFunctions {
                 } else {
                     ExtraText = "You bought an energy drink for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n") + ColorGen("d90202", "-20 Health\n\n")
                 }
-                Money -= 15
+                ChangeMoney(-15)
             } else {
                 ExtraText = "You don't have enough money to purchase this item\n\n"
             }
@@ -1034,7 +1133,7 @@ class SceneFunctions {
     
     FastFoodRestaurantWork() {
         let amount = RandomNumber(5)
-        Money += 5 + amount
+        ChangeMoney(5 + amount)
         ChangeStat("Fatigue", 9)
         ChangeXp("Communication", 3)
         ExtraText = "Nothing interesting happened.\nYou got paid " + ColorGen("006400", "$5") + " and you earnt " + ColorGen("006400", "$" + amount) + " in tips\n" + ColorGen("d90202", "+9 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
@@ -1129,7 +1228,7 @@ class SceneFunctions {
     }
     
     DebtPay() {
-        Money -= DebtDue
+        ChangeMoney(DebtDue * -1)
         Debt -= DebtDue
         DebtDue = 0
         ExtraText = "You paid the banker with physical cash.\n\n"
@@ -1186,7 +1285,7 @@ class SceneFunctions {
             if (Money >= 50) {
                 ExtraText = "You bought a Moonberry.\n\n"
                 ChangeInventory("Moonberry", 1)
-                Money -= 50
+                ChangeMoney(-50)
             } else {
                 ExtraText = "You don't have enough money to purchase this item\n\n"
             }
@@ -1219,7 +1318,7 @@ class SceneFunctions {
         let quantity = args[1]
         let PrevStall = args[2]
         Inventory[item] -= quantity
-        Money += StallSellPrices[item] * quantity
+        ChangeMoney(StallSellPrices[item] * quantity)
         ExtraText = "You sold " + quantity + " " + ItemData[item]['Name'] + " for " + ColorGen("006400", "$" + StallSellPrices[item] * quantity) + "\n\n{Next|" + PrevStall + "|0|StallLoader(" + PrevStall + ")}"
     }
 
@@ -1252,6 +1351,7 @@ class SceneFunctions {
             EnemyActionText = "\n" + Enemy['Name'] + " punched you and dealt 5 damage"
             ChangeStat("Health", -5)
         }
+        Turn += 1
         ExtraText = BoldGen("Combat") + "\n\n" + BoldGen("You") + "\nHealth: " + Math.round(Stats['Health']) + "/100" + PlayerActionText
         let FinalArgs = args[0] + "," + args[1] + "," + Turn
         ExtraText += "\n\n\n" + BoldGen(Enemy['Name']) + "\nHealth: " + Enemy['Health'] + "/" + Enemy['MaxHealth'] + EnemyActionText + "\n\n"
@@ -1261,7 +1361,17 @@ class SceneFunctions {
             if (EnemyDrops[args[1]] != undefined) {
                 EndText += "You gained " + ColorGen("006400", "$" + gain) + "\n\n{Next|" + args[0] + "|0}"
             }
-            Money += gain
+            ChangeMoney(gain)
+            if (Counts['EnemiesDefeated']) {
+                Counts['EnemiesDefeated'] += 1
+            } else {
+                Counts['EnemiesDefeated'] = 1
+            }
+            if (Counts['EnemiesDefeated'] >= 1) {AwardAchievement("First Blood")}
+            if (Counts['EnemiesDefeated'] >= 10) {AwardAchievement("Skilled Fighter")}
+            if (Counts['EnemiesDefeated'] >= 50) {AwardAchievement("Decimator")}
+            if (Counts['EnemiesDefeated'] >= 200) {AwardAchievement("Annihilation")}
+            if (Turn == 2) {AwardAchievement("Flatline")}
             return
         } else if (Stats['Health'] <= 0) {
             EndText += "You lost\n\n{Next (2h)|HospitalInRoom|120}"
@@ -1274,7 +1384,7 @@ class SceneFunctions {
         if (item == "Laptop") {
             if (Money >= 300) {
                 ExtraText = "You bought a laptop for " + ColorGen("006400", "$300") + "\nYou can use it in your home.\n\n"
-                Money -= 300
+                ChangeMoney(-300)
                 HomeUpgrades['Laptop'] = true
             } else {
                 ExtraText = "You don't have enough money to purchase this item\n\n"
@@ -1285,7 +1395,7 @@ class SceneFunctions {
     BuyWifiSub(NotSureWhatToNameThisArgument) {
         if (NotSureWhatToNameThisArgument == "Buy") {
             if (Money >= 10) {
-                Money -= 10
+                ChangeMoney(-10)
                 DailySubs['Wifi'] = 10
                 ExtraText = "You bought a wifi subscription. You need a laptop to use it.\n\n"
             } else {
@@ -1302,7 +1412,7 @@ class SceneFunctions {
             //ExtraText = "There is nothing interesting on the news right now.\n\n"
         if (NewsType == "Paper") {
             if (Money >= 2) {
-                Money -= 2
+                ChangeMoney(-2)
             } else {
                 ExtraText = "You do not have enough money to purchase a newspaper.\n\n{Back|MeadowbrookStreet|0}"
                 return
@@ -1337,9 +1447,23 @@ class SceneFunctions {
                 HomeUpgrades['CryptoMiner'] = 1
             }
             ExtraText = "You bought a crypto miner. You have " + HomeUpgrades['CryptoMiner'] + " crypto miner(s)\n\n"
-            Money -= 1000
+            ChangeMoney(-1000)
+            AwardAchievement("Passive Income")
         } else {
             ExtraText = "You do not have enough money to purchase a crypto miner."
+        }
+    }
+
+    PubAction(action) {
+        if (action == "Beer") {
+            if (Money >= 10) {
+                ExtraText = "You buy a beer and drink it. It costed " + ColorGen("006400", "$10") + "\n\n"
+                ChangeMoney(-10)
+                ChangeCount("BeerDrunk", 1)
+                ChangeStat("Alcohol", 10)
+            } else {
+                ExtraText = "You don't have enough money to buy beer\n\n"
+            }
         }
     }
 }
@@ -1369,8 +1493,6 @@ function LoadText(text) {
     while (Main.firstChild) {
         Main.removeChild(Main.lastChild)
     }
-    var re = new RegExp("\\{([^|{}]+)\\|([^|{}]+)\\|([0-9]+)\\|?([^|{}(]+)?\\(?([^(){}|]+)?\\)?\\}", "g")
-    var re2 = new RegExp("{[^}]{1,}}", "g")
     var SplitText = text.split(re2)
     var SplitLinks = []
     do {
@@ -1410,7 +1532,11 @@ function LoadText(text) {
                         scenefunctions[SplitLinks[num][4]]()  
                     }
                 }
-                SceneManager(SplitLinks[num][2])
+                if (LinkSceneOverride == false) {
+                    SceneManager(SplitLinks[num][2])
+                } else {
+                    LinkSceneOverride = false
+                }
                 document.getElementById("MainTransition").style.zIndex = 2
                 document.getElementById("MainTransition").style.opacity = 0
                 setTimeout(function() {
@@ -1456,6 +1582,16 @@ $("#SavesButton").click(function() {
     }
 })
 
+$("#AchievementsButton").click(function() {
+    if (AchievementsHidden == true) {
+        AchievementsHidden = false
+        $("#Achievements").show()
+    } else {
+        AchievementsHidden = true
+        $("#Achievements").hide()
+    }
+})
+
 $("#ExportSave").click(function() {
     GetSave()
 })
@@ -1474,5 +1610,30 @@ function SceneManager(selected) {
     document.getElementById("Money").textContent = "$" + Money
     console.log("Loaded scene " + selected + " in " + String(Date.now() - timetick))
 }
+
 SceneManager("Menu")
+
+for (var achievement of Object.keys(AchievementData)) {
+    let parentdiv = document.createElement("div")
+    let namediv = document.createElement("div")
+    let descdiv = document.createElement("div")
+    parentdiv.id = achievement.replace(" ", "-")
+
+    if (AchievementData[achievement]['Secret'] == undefined) {
+        namediv.textContent = achievement
+        namediv.className = "AchievementName"
+
+        descdiv.textContent = AchievementData[achievement]['Desc']
+        descdiv.className = "AchievementDesc"
+    } else {
+        namediv.textContent = achievement.replace(AchievementRegex, "?")
+        namediv.className = "AchievementName"
+
+        descdiv.textContent = AchievementData[achievement]['Desc'].replace(AchievementRegex, "?")
+        descdiv.className = "AchievementDesc"
+    }
+    document.getElementById("Achievements").appendChild(parentdiv)
+    parentdiv.appendChild(namediv)
+    parentdiv.appendChild(descdiv)
+}
 //LoadText("some test string oh also click {this:tothat} and {thistoo:tothattoo} ok thx")

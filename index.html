@@ -14,15 +14,17 @@
     </div>
     <div id="MainTransition"></div>
     <div id="Sidebar">
-        <div class="SidebarText" id="GameTitle">GCG v0.10.1</div>
+        <div class="SidebarText" id="GameTitle">GCG v?</div>
         <div id="SidebarStats">
             <div class="SidebarText" id="SidebarFatigue">Fatigue: 0/100</div>
             <div class="SidebarText" id="SidebarHealth">Health: 100/100</div>
+            <div style="display: none;" class="SidebarText" id="SidebarAlcohol">Alcohol: 0/30</div>
         </div>
         <div id="SidebarButtons">
             <button class="SidebarButtons" id="StatsButton">Stats</button>
             <button class="SidebarButtons" id="InventoryButton">Inventory</button>
             <button class="SidebarButtons" id="SavesButton">Saves</button>
+            <button class="SidebarButtons" id="AchievementsButton">Achievements</button>
         </div>
     </div>
     <div id="Topbar">
@@ -49,6 +51,12 @@
             <button class="UiLink" id="ExportSave">Export Save</button>
             <button class="UiLink" id="ImportSave">Import Save</button>
             <input type="text" id="SaveText">
+        </div>
+
+        <div id="Achievements">Achievements
+            <div id="AchievementItems">
+
+            </div>
         </div>
     </div>
 </body>
