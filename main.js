@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.11.1"
+const Version = "0.11.2"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -32,7 +32,7 @@ var SavesHidden = true
 var AchievementsHidden = true
 var OfficeRank = 0
 var OfficePromotionXP = 0
-var OfficeRanks = [
+const OfficeRanks = [
     {"Title": "File Sorter", "Pay": 8, "Promotion": 20},
     {"Title": "File Analyzer", "Pay": 10, "Promotion": 30, "Skills": {"Math": 3}},
     {"Title": "Database Analyzer", "Pay": 12, "Promotion": 50, "Skills": {"Math": 4, "Technology": 3}},
@@ -57,7 +57,6 @@ var DailySubs = {}
 var Checks = {}
 var Counts = {}
 var LinkSceneOverride = false
-// Medal stuff later when more content
 var Achievements = []
 const AchievementData = {
     "Pocket Change": {"Desc": "Reach $10"},
@@ -73,6 +72,9 @@ const AchievementData = {
     "Caver": {"Desc": "Discover the crystal caves", "Secret": true},
     "Flatline": {"Desc": "Defeat an enemy in one hit"},
     "Passive Income": {"Desc": "Buy a crypto miner"},
+    "Novice Forager": {"Desc": "Collect 100 items from the forest"},
+    "Forager": {"Desc": "Collect 500 items from the forest"},
+    "Skilled Forager": {"Desc": "Collect 2000 items from the forest"},
 }
 
 const AchievementRegex = new RegExp("[a-zA-Z0-9]", "g")
@@ -102,7 +104,9 @@ function ChangeTime(amount) {
                 Checks['BankDebt'] = true
                 Checks['BankDebtNotice'] = true
             }
-            DebtDue += DebtScaling[Math.floor(YearDay / 7)]
+            if (Math.floor(YearDay / 7) < DebtScaling.length) {
+                DebtDue += DebtScaling[Math.floor(YearDay / 7)]
+            }
             WeekDay = 1
         }
         document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
@@ -567,7 +571,7 @@ class scenes {
 
     ApartmentHall() {
         if (Checks['BankDebtNotice'] == true) {
-            delete Checks['BankDebtNotice']
+            delete Checks['BankDebtNotice'] // There isnt really any negative effect of debt at the moment
             return "A banker approaches you.\n\n\"Good " + GetTimeName(true) + ", I'm here to remind you that your weekly debt payment is overdue. This will negatively affect your reputation so I recommend paying it off as soon as possible. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + "\"\n\n{Next|ApartmentHall|0}"
         } else {
             if (Tutorials['Banker'] == true) {
@@ -1088,6 +1092,13 @@ class SceneFunctions {
                 ExtraText = "You found " + amount + " green berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             } else {
                 ExtraText = "You found nothing\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+            }
+
+            if (rng < 600) {
+                ChangeCount("BerriesHarvested", amount)
+                if (Counts['BerriesHarvested'] >= 100) {AwardAchievement("Novice Forager")}
+                if (Counts['BerriesHarvested'] >= 500) {AwardAchievement("Forager")}
+                if (Counts['BerriesHarvested'] >= 2000) {AwardAchievement("Skilled Forager")}
             }
         } else if (depth == 2) {
             let rng = GetRng()
@@ -1649,4 +1660,3 @@ for (var achievement of Object.keys(AchievementData)) {
     parentdiv.appendChild(namediv)
     parentdiv.appendChild(descdiv)
 }
-//LoadText("some test string oh also click {this:tothat} and {thistoo:tothattoo} ok thx")
