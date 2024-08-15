@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.11.2"
+const Version = "0.11.3"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -534,15 +534,15 @@ class scenes {
     }
     
     About() {
-        return "I made this game cuz i kinda liked visual novels but didn't have the skill to be able to draw stuff so yea this game is basically an interactive novel (but kinda bad) instead\n\n{Return|Menu|0}"
+        return "I made this game cuz i kinda liked visual novels but didn't have the skill to be able to draw stuff so yea this game WAS basically an interactive novel (but kinda bad) instead\n\n{Return|Menu|0}"
     }
     
     Tutorial() {
-        return "Welcome to Generic City Game.\nImportant reminder that this game is not finished yet so there may be changes made in the future. You also have to manually save for now (intentional)\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nThats about it press the blue text below to continue.\n{Next|Home|0}"
+        return "Welcome to Generic City Game.\nImportant reminder that this game is not finished yet so there may be changes made in the future. You also have to manually save for now (intentional)\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nPress the blue text below to continue.\n{Next|Home|0}"
     }
     
     Home() {
-        let r = "You are in your apartment its currently " + GetDayName() + " " + GetTimeName(false) + ".\n\n{Sleep|Sleep|0}"
+        let r = "You are in your apartment it's currently " + GetDayName() + " " + GetTimeName(false) + ".\n\n{Sleep|Sleep|0}"
         r += HomeUpgrades['Laptop'] == true ? "\n{Laptop|HomeLaptop|0}" : ""
         r += HomeUpgrades['CryptoMiner'] > 0 ? "\n{Crypto Miners|HomeCryptoMiner|0}" : ""
         r += "\n\n{Leave (1m)|ApartmentHall|1}"
@@ -566,7 +566,7 @@ class scenes {
     }
 
     HomeCryptoMiner() {
-        return "Your crypto miners are earning you " + ColorGen("006400", "$" + HomeUpgrades['CryptoMiner'] * 30) + " per day\n\n{Back|Home|0}"
+        return "Your crypto miners are earning you " + ColorGen("006400", "$" + HomeUpgrades['CryptoMiner'] * 30) + " per day.\n\n{Back|Home|0}"
     }
 
     ApartmentHall() {
@@ -598,12 +598,12 @@ class scenes {
         if (Tutorials['School'] == true) {
             return "Your mailbox is empty.\n\n{Back|ApartmentHall|0}"
         } else {
-            return "You have a letter from your school\n\n{Read (10m)|SchoolLetter1|10}\n\n{Back|ApartmentHall|0}"
+            return "You have a letter from your school.\n\n{Read (10m)|SchoolLetter1|10}\n\n{Back|ApartmentHall|0}"
         }
     }
 
     ApartmentSteveRoom() {
-        return "You knock on steve's door and enter his apartment.\n\n{Talk (10m)|Empty|10|SteveTalk}\n{Ask question|ApartmentSteveRoomQuestion|0}\n\n{Leave (1m)|ApartmentHall|1}" // TODO: Better description
+        return "You knock on steve's door and enter his apartment. You notice a large rack filled with computers.\n\n{Talk (10m)|Empty|10|SteveTalk}\n{Ask question|ApartmentSteveRoomQuestion|0}\n\n{Leave (1m)|ApartmentHall|1}"
     }
 
     ApartmentSteveRoomQuestion() {
@@ -628,18 +628,18 @@ class scenes {
         if (Time > 360 && Time < 900 && Day >= 2) {
             Temp1 = "{Buy newspaper ($2)|Empty|5|NewsManager(Paper)}\n"
         }
-        return "You are on Meadowbrook Street, a slightly poorer part of town. There's very few cars on this road. You hear the distant hum of traffic.\n\n{Apartment block (1m)|ApartmentHall|1}\n" + Temp1 + "{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
+        return "You are on Meadowbrook Street, a slightly poorer part of town. There are very few cars on this road. You hear the distant hum of traffic.\n\n{Apartment block (1m)|ApartmentHall|1}\n" + Temp1 + "{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
     }
     
     ConvenienceStore() {
         if (Jobs['ConvenienceStore'] == true) {
             if (Stats['Fatigue'] < 90) {
-                return "You are in the convenience store, it has shelves stocked with cheap items\n\n{Work (1h)|ConvenienceStore|60|ConvenienceStoreWork}\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
+                return "You are in the convenience store, it has shelves stocked with cheap items.\n\n{Work (1h)|ConvenienceStore|60|ConvenienceStoreWork}\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
             } else {
-                return "You are in the convenience store, it has shelves stocked with cheap items\n\n" + ColorGen("d90202", "You are too tired to work") + "\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
+                return "You are in the convenience store, it has shelves stocked with cheap items.\n\n" + ColorGen("d90202", "You are too tired to work") + "\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
             }
         } else {
-            return "You are in the convenience store, it has shelves stocked with cheap items\n\n{Inquire about work (5m)|ConvenienceStoreWO1|5}\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
+            return "You are in the convenience store, it has shelves stocked with cheap items.\n\n{Inquire about work (5m)|ConvenienceStoreWO1|5}\n\n{Coffee $10|ConvenienceStore|1|ConvenienceStoreBuy(Coffee)}\n{Energy Drink $15|ConvenienceStore|1|ConvenienceStoreBuy(EnergyDrink)}\n\n{Leave (1m)|MeadowbrookStreet|1}"
         }
     }
     
@@ -648,7 +648,7 @@ class scenes {
     }
     
     ConvenienceStoreWO2() {
-        return "You listen carefully as he explains what to do\n{Next|ConvenienceStore|0}"
+        return "You listen carefully as he explains what to do.\n{Next|ConvenienceStore|0}"
     }
     
     Sleep() {
@@ -662,20 +662,20 @@ class scenes {
     Bank() {
         if (DebtDue == 0) {
             if (Day <= 2) {
-                return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due next week: " + ColorGen("006400", "$100") + "\n\n{Leave (1m)|CrestwoodStreet|1}"
+                return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier.\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due next week: " + ColorGen("006400", "$100") + "\n\n{Leave (1m)|CrestwoodStreet|1}"
             } else {
-                return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due this week: " + ColorGen("006400", "$" + DebtDue) + "\n\n" + ColorGen("2eba04", "Debt paid for this week") + "\n\n{Leave (1m)|CrestwoodStreet|1}"
+                return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier.\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due this week: " + ColorGen("006400", "$" + DebtDue) + "\n\n" + ColorGen("2eba04", "Debt paid for this week") + "\n\n{Leave (1m)|CrestwoodStreet|1}"
             }
         } else {
-            return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due this week: " + ColorGen("006400", "$" + DebtDue) + "\n\n{Pay debt (15m)|BankPayDebt|15}\n\n{Leave (1m)|CrestwoodStreet|1}"
+            return "You are in the bank. It's well lit with luxurious red carpets and a crystal chandelier.\n\nDebt: " + ColorGen("006400", "$" + Debt) + "\n Due this week: " + ColorGen("006400", "$" + DebtDue) + "\n\n{Pay debt (15m)|BankPayDebt|15}\n\n{Leave (1m)|CrestwoodStreet|1}"
         }
     }
     
     BankPayDebt() {
         if (Money >= DebtDue) {
-            return "Good " + GetTimeName(true) + " your here to pay off your debt? We only accept payment for the full week.\n\n{Pay (10m)|Bank|10|DebtPay}\n{Leave|Bank|1}"
+            return "\"Good " + GetTimeName(true) + " are you here to pay off your debt? We only accept payment for the full week.\"\n\n{Pay (10m)|Bank|10|DebtPay}\n{Leave|Bank|1}"
         } else {
-            return "Good " + GetTimeName(true) + " your here to pay off your debt? We only accept payment for the full week.\n\n" + ColorGen("d90202", "Not enough money") + "\n{Leave|Bank|1}"
+            return "\"Good " + GetTimeName(true) + " are you here to pay off your debt? We only accept payment for the full week.\"\n\n" + ColorGen("d90202", "Not enough money") + "\n{Leave|Bank|1}"
         }
     }
     
@@ -710,9 +710,9 @@ class scenes {
     
     OfficeWorkEntry() {
         if (OfficePromotionXP < OfficeRanks[OfficeRank]['Promotion']) {
-            return "Since your desk is on the 3rd floor you take the staircase to get there as its more efficient.\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
+            return "Since your desk is on the 3rd floor you take the staircase to get there as it's more efficient.\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         } else {
-            return "Since your desk is on the 3rd floor you take the staircase to get there as its more efficient.\n\n{Request Promotion|OfficePromotion|0}\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
+            return "Since your desk is on the 3rd floor you take the staircase to get there as it's more efficient.\n\n{Request Promotion|OfficePromotion|0}\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         }
     }
 
@@ -724,9 +724,9 @@ class scenes {
         OfficePromotionXP += 8
         ChangeMoney(8 * OfficeRanks[OfficeRank]['Pay'])
         if (OfficeRanks[OfficeRank]['Promotion'] <= OfficePromotionXP) {
-            EndText = "\n\nYou can request for a promotion the next time you work if you have the required skills"
+            EndText = "\n\nYou can request for a promotion the next time you work if you have the required skills."
         }
-        return "You finish your 8 hour shift and head down to the first floor. It is extremely crowded with thousands of employees leaving the building. You got paid " + ColorGen("006400", "$" + 8 * OfficeRanks[OfficeRank]['Pay']) + " upon leaving the building.\n\n" + InfoText("Office") + "\n\n{Next|CrestwoodStreet|0}"
+        return "You finish your 8 hour shift and head down to the first floor. It is extremely crowded with thousands of employees leaving the building. You were paid " + ColorGen("006400", "$" + 8 * OfficeRanks[OfficeRank]['Pay']) + " upon leaving the building.\n\n" + InfoText("Office") + "\n\n{Next|CrestwoodStreet|0}"
     }
     
     OfficePromotion() {
@@ -736,7 +736,7 @@ class scenes {
             if (OfficeRank == 6) {
                 AwardAchievement("Manager")
             }
-            return "You head towards a futuristic looking device that tracks your hours worked and your performance. You have automatically been promoted to \"" + OfficeRanks[OfficeRank]['Title'] + "\". You can begin working now\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
+            return "You head towards a futuristic looking device that tracks your hours worked and your performance. You have automatically been promoted to \"" + OfficeRanks[OfficeRank]['Title'] + "\". You can begin working now.\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         } else {
             var SkillsRequired = SkillCheck(OfficeRanks[OfficeRank + 1]['Skills'])
             var RequiredString = ""
@@ -773,11 +773,11 @@ class scenes {
     
     FastFoodRestaurantWO3A() {
         Jobs['FastFood'] = true
-        return "\"Great, you can begin working at any time, your pay starts at $5 per hour. You also get to keep any tips that you recieve\"\n\n{Continue|FastFoodRestaurant|0}"
+        return "\"Great, you can begin working at any time, your pay starts at $5 per hour. You also get to keep any tips that you recieve.\"\n\n{Continue|FastFoodRestaurant|0}"
     }
     
     FastFoodRestaurantWO3B() {
-        return "\"Well thats unfortunate, but don't worry you can always come back at any time after you improved your skills\"\n\n{Continue|FastFoodRestaurant|0}"
+        return "\"Well thats unfortunate, but don't worry you can always come back at any time after you improved your skills.\"\n\n{Continue|FastFoodRestaurant|0}"
     }
     
     TechnologyStore() {
@@ -797,7 +797,7 @@ class scenes {
 
     LunarRoad() {
         if (Time < 60) {
-            return "You are on Lunar Road. There appears to be nothing besides a forest nearby. You notice a faint beam of light pointing towards a manhole cover\n\n{Walk towards the beam of light (1m)|LunarRoadManholeCover1|1}\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Rockefeller Street (10m)|RockefellerStreet|10}"
+            return "You are on Lunar Road. There appears to be nothing besides a forest nearby. You notice a faint beam of light pointing towards a manhole cover.\n\n{Walk towards the beam of light (1m)|LunarRoadManholeCover1|1}\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Rockefeller Street (10m)|RockefellerStreet|10}"
         } else {
             return "You are on Lunar Road. There appears to be nothing besides a forest nearby.\n\n{Forest (10m)|ForestLayer1|10}\n\n{Oxford Road (5m)|OxfordStreet|5}\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Rockefeller Street (10m)|RockefellerStreet|10}"
         }
@@ -823,7 +823,7 @@ class scenes {
         if (Stats['Fatigue'] < 100) {
             return "You are near the enterance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n{Look for berries (20m)|ForestLayer1|20|ForestGather(1)}\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
         } else {
-            return "You are near the enterance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
+            return "You are near the enterance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
         }
     }
 
@@ -850,7 +850,7 @@ class scenes {
         }
         if (Skills['Foraging'] >= 7) {
             if (Stats['Fatigue'] < 100) {
-                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see\n\n{Explore (20m)|ForestLayer3|20|ForestGather(3)}\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
+                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n{Explore (20m)|ForestLayer3|20|ForestGather(3)}\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
             } else {
                 return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n" + ColorGen("d90202", "You are too tired to explore") + "\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
             }
@@ -876,12 +876,12 @@ class scenes {
     }
 
     OxfordStreet() {
-        return "You are on Oxford Street. There are a few students walking around\n\n{School (1m)|SchoolYard|1}\n\n{Lunar Road (5m)|LunarRoad|5}"
+        return "You are on Oxford Street. There are a few students walking around.\n\n{School (1m)|SchoolYard|1}\n\n{Lunar Road (5m)|LunarRoad|5}"
     }
     
     SchoolYard() {
         if (Day < 2 || Time < 480 || Time > 960) {
-            return "The school gates are locked. You could probably break in if you had the required skills\n\n{Leave (1m)|OxfordStreet|1}"
+            return "The school gates are locked. You could probably break in if you had the required skills.\n\n{Leave (1m)|OxfordStreet|1}"
         } else {
             return "You are in the school courtyard, it serves as a hub for social interaction.\n\n{Enter the school (3m)|SchoolFloor1|3}\n\n{Leave (3m)|OxfordStreet|3}"
         }
@@ -890,15 +890,15 @@ class scenes {
     SchoolFloor1() {
         let NextClass = GetNextClass()
         if (Time >= 765 && Time < 795) {
-            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next\n\n{" + ColorGen("91bdff", "Canteen (3m)") + "|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
+            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{" + ColorGen("91bdff", "Canteen (3m)") + "|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
         } else {
-            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next\n\n{Canteen (3m)|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
+            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{Canteen (3m)|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
         }
     }
 
     SchoolFloor2() {
         let NextClass = GetNextClass()
-        return "You are on the second floor of your school. You can take extra classes here after school. You have " + NextClass + " next\n\n{Technology Classroom (2m)|SchoolTechnologyClassroom|2}\n\n{Go downstairs (3m)|SchoolFloor1|3}"
+        return "You are on the second floor of your school. You can take extra classes here after school. You have " + NextClass + " next.\n\n{Technology Classroom (2m)|SchoolTechnologyClassroom|2}\n\n{Go downstairs (3m)|SchoolFloor1|3}"
     }
     
     SchoolCanteen() {
@@ -907,9 +907,9 @@ class scenes {
     
     SchoolScienceClassroom() {
         if (Time < 550 && Time > 535) {
-            return "You are in the science classroom. It has slightly damaged lab equipment and walls filled with posters illustrating scientific concepts\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Science,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Science,Daydream)}"
+            return "You are in the science classroom. It has slightly damaged lab equipment and walls filled with posters illustrating scientific concepts.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Science,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Science,Daydream)}"
         } else {
-            return "The door for the science classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the science classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
     
@@ -917,7 +917,7 @@ class scenes {
         if (Time < 600 && Time > 585) {
             return "You are in the english classroom. Every table in this classroom contains a reading lamp.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(English,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(English,Daydream)}"
         } else {
-            return "The door for the english classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the english classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
     
@@ -925,7 +925,7 @@ class scenes {
         if (Time < 680 && Time > 665) {
             return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equasions.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Math,Daydream)}"
         } else {
-            return "The door for the math classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the math classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
     
@@ -933,7 +933,7 @@ class scenes {
         if (Time < 730 && Time > 715) {
             return "You are in the business classroom. There's multiple graphs on the wall that provides examples of a market.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Business,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Business,Daydream)}"
         } else {
-            return "The door for the business classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the business classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
     
@@ -941,7 +941,7 @@ class scenes {
         if (Time < 810 && Time > 795) {
             return "You are in the history classroom. It contains multiple maps and timelines of important events in history.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(History,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(History,Daydream)}"
         } else {
-            return "The door for the history classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the history classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
     
@@ -949,7 +949,7 @@ class scenes {
         if (Time < 860 && Time > 845) {
             return "You are in the physical education classroom. It's slightly bigger than the other classrooms as extra space is needed for the training equipment.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(PE,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(PE,Daydream)}"
         } else {
-            return "The door for the physical education classroom is currently locked\n\n{Back|SchoolFloor1|0}"
+            return "The door for the physical education classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
     }
 
@@ -957,7 +957,7 @@ class scenes {
         if (Time < 910 && Time > 895) {
             return "You are in the technology classroom. It is filled with computers and cables.\n\nWhat would you like to do?\n\n{Study|SchoolFloor2|45|ClassManager(Technology,Study)}"
         } else {
-            return "The door for the technology classroom is currently locked\n\n{Back|SchoolFloor2|0}"
+            return "The door for the technology classroom is currently locked.\n\n{Back|SchoolFloor2|0}"
         }
     }
     
@@ -974,11 +974,11 @@ class scenes {
     }
     
     ShorelineStreet() {
-        return "You are on Shoreline Street. You can access the beach from here\n\n{Beach (5m)|Beach|5}\n{Wifi shop (2m)|WifiShop|2}\n\n{Market Street (5m)|MarketStreet|5}"
+        return "You are on Shoreline Street. You can access the beach from here.\n\n{Beach (5m)|Beach|5}\n{Wifi shop (2m)|WifiShop|2}\n\n{Market Street (5m)|MarketStreet|5}"
     }
     
     Beach() {
-        return "You are on the beach. (Better description later)\n\n{Shoreline Street (5m)|ShorelineStreet|5}" // TODO: better description
+        return "You are at the beach. Waves crash rhythmically against the shore.\n\n{Shoreline Street (5m)|ShorelineStreet|5}"
     }
 
     WifiShop() {
@@ -1009,7 +1009,7 @@ class scenes {
         return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
     }
 
-    RockefellerStreet() { // TODO: Add pub
+    RockefellerStreet() {
         if (Time >= 1140 || Time <= 240) {
             return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to the large pub on the side of the road.\n\n{Pub (3m)|Pub|3}\n\n{Lunar Road (10m)|LunarRoad|10}"
         } else {
@@ -1035,10 +1035,10 @@ class SceneFunctions {
         ChangeXp("Communication", 3)
         if (rng < 100) {
             ChangeStat("Fatigue", 5)
-            ExtraText = "The convenience store suddenly had a spike in customers\nYou got paid " + ColorGen("006400", "$3") + "\n" + ColorGen("d90202", "+12 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
+            ExtraText = "The convenience store suddenly had a spike in customers.\nYou get paid " + ColorGen("006400", "$3") + "\n" + ColorGen("d90202", "+12 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
         } else if (rng < 150) {
             ChangeStat("Health", -4)
-            ExtraText = "While stocking the shelves you slip on a puddle of water\nYou got paid " + ColorGen("006400", "$3") + "\n" + ColorGen("d90202", "-4 Health") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
+            ExtraText = "While stocking the shelves you slip on a puddle of water.\nYou get paid " + ColorGen("006400", "$3") + "\n" + ColorGen("d90202", "-4 Health") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
         } else {
             ExtraText = "Nothing interesting happened.\nYou got paid " + ColorGen("006400", "$3") + "\n" + ColorGen("d90202", "+7 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
         }
@@ -1056,7 +1056,7 @@ class SceneFunctions {
                 }
                 ChangeMoney(-10)
             } else {
-                ExtraText = "You don't have enough money to purchase this item\n\n"
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
             }
         } else if (item == "EnergyDrink") {
             if (Money >= 15) {
@@ -1070,7 +1070,7 @@ class SceneFunctions {
                 }
                 ChangeMoney(-15)
             } else {
-                ExtraText = "You don't have enough money to purchase this item\n\n"
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
             }
         }
     }
@@ -1083,15 +1083,15 @@ class SceneFunctions {
             ChangeXp("Foraging", 5)
             if (rng < 300) {
                 ChangeInventory("RedBerry", amount)
-                ExtraText = "You found " + amount + " red berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " red berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             } else if (rng < 500) {
                 ChangeInventory("BlueBerry", amount)
-                ExtraText = "You found " + amount + " blue berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " blue berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             } else if (rng < 600) {
                 ChangeInventory("GreenBerry", amount)
-                ExtraText = "You found " + amount + " green berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             } else {
-                ExtraText = "You found nothing\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             }
 
             if (rng < 600) {
@@ -1107,18 +1107,18 @@ class SceneFunctions {
             ChangeXp("Foraging", 7)
             if (rng < 200) {
                 ChangeInventory("RedBerry", amount)
-                ExtraText = "You found " + amount + " red berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " red berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else if (rng < 500) {
                 ChangeInventory("BlueBerry", amount)
-                ExtraText = "You found " + amount + " blue berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " blue berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else if (rng < 650) {
                 ChangeInventory("GreenBerry", amount)
-                ExtraText = "You found " + amount + " green berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else if (rng < 700 && Time < 300) {
                 ChangeInventory("Moonberry", 1)
-                ExtraText = "You found 1 moonberry\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ExtraText = "You found 1 moonberry.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else {
-                ExtraText = "You found nothing\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             }
         } else if (depth == 3) {
             let rng = GetRng()
@@ -1127,13 +1127,13 @@ class SceneFunctions {
             ChangeXp("Foraging", 10)
             if (rng < 100) {
                 ChangeInventory("PurpleBerry", amount)
-                ExtraText = "You found " + amount + " purple berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " purple berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
             } else if (rng < 400) {
                 ChangeInventory("BlueBerry", amount)
-                ExtraText = "You found " + amount + " blue berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " blue berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
             } else if (rng < 650) {
                 ChangeInventory("GreenBerry", amount)
-                ExtraText = "You found " + amount + " green berries\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
+                ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
             } else if (rng < 750) {
                 if (Secrets['Ruins'] == true) {
                     ExtraText = "You found some ancient ruins."
@@ -1141,12 +1141,11 @@ class SceneFunctions {
                     ExtraText = "You found some ancient ruins. " + ColorGen("ffd700", "You can access the ruins now")
                 }
                 Secrets['Ruins'] = true
-                //WIP
             } else if (rng < 800 && Time < 300) {
                 ChangeInventory("Moonberry", 1)
-                ExtraText = "You found 1 moonberry\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ExtraText = "You found 1 moonberry.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else {
-                ExtraText = "You found nothing\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+                ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             }
         }
     }
@@ -1160,7 +1159,7 @@ class SceneFunctions {
         ChangeMoney(5 + amount)
         ChangeStat("Fatigue", 9)
         ChangeXp("Communication", 3)
-        ExtraText = "Nothing interesting happened.\nYou got paid " + ColorGen("006400", "$5") + " and you earnt " + ColorGen("006400", "$" + amount) + " in tips\n" + ColorGen("d90202", "+9 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
+        ExtraText = "Nothing interesting happened.\nYou get paid " + ColorGen("006400", "$5") + " and you earnt " + ColorGen("006400", "$" + amount) + " in tips.\n" + ColorGen("d90202", "+9 Fatigue") + ColorGen("21a8d1", "\n+3 Communication XP") + "\n\n"
     }
     
     ClassManager(args) {
@@ -1171,79 +1170,79 @@ class SceneFunctions {
                 ChangeXp("Science", 10)
                 ChangeStat("Fatigue", 10)
                 Time = 585
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Science XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Science XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Science", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 585
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Science XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Science XP") + "\n\n"
             }
         } else if (Subject == "English") {
             if (Type == "Study") {
                 ChangeXp("English", 10)
                 ChangeStat("Fatigue", 10)
                 Time = 635
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 English XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 English XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("English", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 635
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 English XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 English XP") + "\n\n"
             }
         } else if (Subject == "Math") {
             if (Type == "Study") {
                 ChangeXp("Math", 10)
                 ChangeStat("Fatigue", 10)
                 Time = 715
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Math XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Math XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Math", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 715
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Math XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Math XP") + "\n\n"
             }
         } else if (Subject == "Business") {
             if (Type == "Study") {
                 ChangeXp("Business", 10)
                 ChangeStat("Fatigue", 10)
                 Time = 765
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Business XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Business XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Business", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 765
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Business XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Business XP") + "\n\n"
             }
         } else if (Subject == "History") {
             if (Type == "Study") {
                 ChangeXp("History", 10)
                 ChangeStat("Fatigue", 10)
                 Time = 845
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 History XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 History XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("History", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 845
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 History XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 History XP") + "\n\n"
             }
         } else if (Subject == "PE") {
             if (Type == "Study") {
                 ChangeXp("Fitness", 10)
                 ChangeStat("Fatigue", 20)
                 Time = 895
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+20 Fatigue") + ColorGen("21a8d1", "\n+10 Fitness XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+20 Fatigue") + ColorGen("21a8d1", "\n+10 Fitness XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Fitness", 2)
                 ChangeStat("Fatigue", 3)
                 Time = 895
-                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Fitness XP") + "\n\n"
+                ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Fitness XP") + "\n\n"
             }
         } else if (Subject == "Technology") {
             if (Type == "Study") {
                 ChangeXp("Technology", 10)
                 ChangeStat("Fatigue", 5)
                 Time = 945
-                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom\n" + ColorGen("d90202", "+5 Fatigue") + ColorGen("21a8d1", "\n+10 Technology XP") + "\n\n"
+                ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+5 Fatigue") + ColorGen("21a8d1", "\n+10 Technology XP") + "\n\n"
             }
         }
         let m = Time % 60
@@ -1263,16 +1262,16 @@ class SceneFunctions {
         if (hour < 8) {
             if (rng < 100) {
                 ChangeStat("Fatigue", 12)
-                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift\n" + ColorGen("d90202", "+12 Fatigue") + "\n\nYou had to deliver documents to your manager.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
+                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift.\n" + ColorGen("d90202", "+12 Fatigue") + "\n\nYou had to deliver documents to your manager.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
             } else if (rng < 150) {
                 ChangeStat("Fatigue", 3)
-                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift\n" + ColorGen("d90202", "+3 Fatigue") + "\n\nYou got a short break during your shift.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
+                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift.\n" + ColorGen("d90202", "+3 Fatigue") + "\n\nYou got a short break during your shift.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
             } else if (rng < 250) {
                 ChangeStat("Fatigue", 10)
-                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift\n" + ColorGen("d90202", "+10 Fatigue") + "\n\nYou had to attend an extremely boring meeting for the entire hour.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
+                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift.\n" + ColorGen("d90202", "+10 Fatigue") + "\n\nYou had to attend an extremely boring meeting for the entire hour.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
             } else {
                 ChangeStat("Fatigue", 9)
-                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift\n" + ColorGen("d90202", "+9 Fatigue") + "\n\nNothing interesting happened.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
+                ExtraText = "It is currently the " + NumberSuffix(hour) + " hour of your day shift.\n" + ColorGen("d90202", "+9 Fatigue") + "\n\nNothing interesting happened.\n\n{Next|OfficeWorkMid|60|OfficeWorkManager(" + (Number(hour) + 1) + ")}"
             }
 
         } else if (hour == 8) {
@@ -1311,7 +1310,7 @@ class SceneFunctions {
                 ChangeInventory("Moonberry", 1)
                 ChangeMoney(-50)
             } else {
-                ExtraText = "You don't have enough money to purchase this item\n\n"
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
             }
         }
     }
@@ -1350,7 +1349,7 @@ class SceneFunctions {
         if (action == "Explore") {
             ChangeStat("Fatigue", 10)
             ChangeXp("History", 10)
-            ExtraText = "You explore the ruins.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 History XP") + "\n\n" // TODO: put better description
+            ExtraText = "You explore the ruins. The crumbling walls are covered in moss and overgrown vines.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 History XP") + "\n\n"
         }
     }
     
@@ -1380,7 +1379,7 @@ class SceneFunctions {
         let FinalArgs = args[0] + "," + args[1] + "," + Turn
         ExtraText += "\n\n\n" + BoldGen(Enemy['Name']) + "\nHealth: " + Enemy['Health'] + "/" + Enemy['MaxHealth'] + EnemyActionText + "\n\n"
         if (Enemy['Health'] <= 0) {
-            EndText += "You won\n\n"
+            EndText += "You won.\n\n"
             let gain = RandomNumberFromMinMax(EnemyDrops[args[1]]['MoneyMin'], EnemyDrops[args[1]]['MoneyMax'])
             if (EnemyDrops[args[1]] != undefined) {
                 EndText += "You gained " + ColorGen("006400", "$" + gain) + "\n\n{Next|" + args[0] + "|0}"
@@ -1398,7 +1397,7 @@ class SceneFunctions {
             if (Turn == 2) {AwardAchievement("Flatline")}
             return
         } else if (Stats['Health'] <= 0) {
-            EndText += "You lost\n\n{Next (2h)|HospitalInRoom|120}"
+            EndText += "You lost.\n\n{Next (2h)|HospitalInRoom|120}"
             return
         }
         LoadCombatButtons(FinalArgs)
@@ -1411,7 +1410,7 @@ class SceneFunctions {
                 ChangeMoney(-300)
                 HomeUpgrades['Laptop'] = true
             } else {
-                ExtraText = "You don't have enough money to purchase this item\n\n"
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
             }
         }
     }
@@ -1423,11 +1422,11 @@ class SceneFunctions {
                 DailySubs['Wifi'] = 10
                 ExtraText = "You bought a wifi subscription. You need a laptop to use it.\n\n"
             } else {
-                ExtraText = "You don't have enough money to buy a subscription\n\n"
+                ExtraText = "You don't have enough money to buy a subscription.\n\n"
             }
         } else {
             delete DailySubs['Wifi']
-            ExtraText = "You cancelled your wifi subscription\n\n"
+            ExtraText = "You cancelled your wifi subscription.\n\n"
         }
     }
 
@@ -1446,7 +1445,7 @@ class SceneFunctions {
         if (Day < 5) {
             ExtraText = "The job market has witnessed a rapid growth in available jobs in various sectors. A significant amount of these positions are low paying.\n\n" + ColorGen("757b94", "(The news changes every few days)") + "\n\n"
         } else {
-            ExtraText = "There is nothing interesting on the news right now\n\n"
+            ExtraText = "There is nothing interesting on the news right now.\n\n"
         }
         
         if (NewsType == "Paper") {
@@ -1470,7 +1469,7 @@ class SceneFunctions {
             } else {
                 HomeUpgrades['CryptoMiner'] = 1
             }
-            ExtraText = "You bought a crypto miner. You have " + HomeUpgrades['CryptoMiner'] + " crypto miner(s)\n\n"
+            ExtraText = "You bought a crypto miner. You have " + HomeUpgrades['CryptoMiner'] + " crypto miner(s).\n\n"
             ChangeMoney(-1000)
             AwardAchievement("Passive Income")
         } else {
@@ -1486,7 +1485,7 @@ class SceneFunctions {
                 ChangeCount("BeerDrunk", 1)
                 ChangeStat("Alcohol", 10)
             } else {
-                ExtraText = "You don't have enough money to buy beer\n\n"
+                ExtraText = "You don't have enough money to buy beer.\n\n"
             }
         }
     }
