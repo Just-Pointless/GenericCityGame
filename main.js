@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.11.3"
+const Version = "0.12.0"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -25,7 +25,14 @@ var Skills = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Ma
 var SkillXp = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0}
 var Cooldowns = {"Coffee": 0, "EnergyDrink": 0}
 var Inventory = {}
-const ItemData = {"RedBerry": {"Name": "Red Berries", "Usable": false}, "BlueBerry": {"Name": "Blue Berries", "Usable": false}, "GreenBerry": {"Name": "Green Berries", "Usable": false}, "Moonberry": {"Name": "Moonberries", "Usable": true}}
+const ItemData = {
+    "RedBerry": {"Name": "Red Berries", "Usable": false},
+    "BlueBerry": {"Name": "Blue Berries", "Usable": false},
+    "GreenBerry": {"Name": "Green Berries", "Usable": false},
+    "Moonberry": {"Name": "Moonberries", "Usable": true},
+    "PurpleBerry": {"Name": "Purple Berries", "Usable": false},
+    "SeaShell": {"Name": "Sea Shells", "Usable": false},
+}
 var InventoryHidden = true
 var StatsHidden = true
 var SavesHidden = true
@@ -76,6 +83,15 @@ const AchievementData = {
     "Forager": {"Desc": "Collect 500 items from the forest"},
     "Skilled Forager": {"Desc": "Collect 2000 items from the forest"},
 }
+var HighStreetJobs = []
+const HighStreetJobInfo = {
+    "Cleaner": {"Time": 1, "Pay": 10, "StatEffects": {"Fatigue": 10}},
+    "Cashier": {"Time": 2, "Pay": 20, "StatEffects": {"Fatigue": 10}},
+    "Flyer Distributor": {"Time": 1, "Pay": 15, "StatEffects": {"Fatigue": 12}, "Req": {"Business": 1}},
+    "Gardener": {"Time": 1, "Pay": 10, "StatEffects": {"Fatigue": 15}}
+}
+const HighStreetJobInfoKeys = Object.keys(HighStreetJobInfo)
+var HighStreetJobReset = true
 
 const AchievementRegex = new RegExp("[a-zA-Z0-9]", "g")
 const re = new RegExp("\\{([^|{}]+)\\|([^|{}]+)\\|([0-9]+)\\|?([^|{}(]+)?\\(?([^(){}|]+)?\\)?\\}", "g")
@@ -120,6 +136,8 @@ function ChangeTime(amount) {
                 ChangeMoney(DailySubs[key] * -1)
             }
         }
+        HighStreetJobs = []
+        HighStreetJobReset = true
     } else {
         Time += amount
     }
@@ -156,7 +174,7 @@ function GetTimeName(person) {
 }
 
 function GetDayName() {
-    return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][WeekDay - 1] // Yes i know sunday should be first but uh it makes weekend checks shorter
+    return ["Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday", "Sunday"][WeekDay - 1]
 }
 
 
@@ -259,8 +277,6 @@ function ChangeInventory(item, increment) {
         document.getElementById("InventoryItems").appendChild(div)
         
     }
-
-    console.log(Inventory)
 }
 
 function ChangeCount(val, increment) {
@@ -309,7 +325,7 @@ function TextLoader(text) {
         document.getElementById("Main").appendChild(div)
         if (num <= SplitLinks.length - 1) {
             button = document.createElement("button")
-            console.log(SplitLinks[num][1])
+            //console.log(SplitLinks[num][1])
             button.innerHTML = SplitLinks[num][1]
             button.className = "MainLink"
             button.id = "Button" + num
@@ -521,6 +537,41 @@ function ChangeMoney(amount) {
     if (Money >= 1000) {AwardAchievement("Money Maker")}
     if (Money >= 100000) {AwardAchievement("Rich")}
     if (Money >= 1000000) {AwardAchievement("Millionaire")}
+}
+
+function GenerateHighStreetJobList() {
+    let TextGen = ""
+    if (HighStreetJobs.length == 0 && HighStreetJobReset == true) {
+        HighStreetJobReset = false
+        for (let i = 0; i < 5; i++) {
+            let Key = HighStreetJobInfoKeys[Math.floor(HighStreetJobInfoKeys.length * Math.random())]
+            let Chosen = HighStreetJobInfo[Key]
+            TextGen += "{" + Key + "|Empty|" + (Chosen['Time'] * 60) + "|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
+            TextGen += Chosen['Time'] == 1 ? Chosen['Time'] + "hr" : Chosen['Time'] + "hrs"
+            if (Chosen['Req']) {
+                TextGen += " | "
+                for (const [skill, value] of Object.entries(Chosen['Req'])) {
+                    TextGen += ColorGen("21a8d1", skill + " " + value)
+                }
+            }
+            TextGen += "\n"
+            HighStreetJobs.push(Key)
+        }
+    } else {
+        HighStreetJobs.forEach(function(Key) {
+            let Chosen = HighStreetJobInfo[Key]
+            TextGen += "{" + Key + "|Empty|" + (Chosen['Time'] * 60) + "|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
+            TextGen += Chosen['Time'] == 1 ? Chosen['Time'] + "hr" : Chosen['Time'] + "hrs"
+            if (Chosen['Req']) {
+                TextGen += " | "
+                for (const [skill, value] of Object.entries(Chosen['Req'])) {
+                    TextGen += ColorGen("21a8d1", skill + " " + value)
+                }
+            }
+            TextGen += "\n"
+        })
+    }
+    return TextGen
 }
 
 // SCENES
@@ -962,7 +1013,7 @@ class scenes {
     }
     
     MarketStreet() {
-        return "You are on Market Street. You can sell items in your inventory here.\n\n{Fruit Buyer (2m)|MarketStreetFruitBuyer|2|StallLoader(MarketStreetFruitBuyer)}\n\n{Shoreline Street (5m)|ShorelineStreet|5}\n{Maple Street (5m)|MapleStreet|5}\n{Crestwood Street (10m)|CrestwoodStreet|10}"
+        return "You are on Market Street. You can sell items in your inventory here.\n\n{Fruit Buyer (2m)|MarketStreetFruitBuyer|2|StallLoader(MarketStreetFruitBuyer)}\n\n{Shoreline Street (5m)|ShorelineStreet|5}\n{Maple Street (5m)|MapleStreet|5}\n{Crestwood Street (10m)|CrestwoodStreet|10}\n{High Street (5m)|HighStreet|5}"
     }
 
     MarketStreetFruitBuyer() {
@@ -978,7 +1029,10 @@ class scenes {
     }
     
     Beach() {
-        return "You are at the beach. Waves crash rhythmically against the shore.\n\n{Shoreline Street (5m)|ShorelineStreet|5}"
+        let r = "You are at the beach. Waves crash rhythmically against the shore.\n\n"
+        r += Stats['Fatigue'] < 100 ? "{Explore (20m)|Beach|20|BeachExplore}\n\n" : ColorGen("d90202", "You are too tired to explore\n\n")
+        r += "{Shoreline Street (5m)|ShorelineStreet|5}"
+        return r
     }
 
     WifiShop() {
@@ -1020,12 +1074,18 @@ class scenes {
     Pub() {
         return "You are in the pub. It's quite busy right now. You can buy beer here.\n\n{Buy Beer ($10)|Pub|2|PubAction(Beer)}\n\n{Rockefeller Street (3m)|RockefellerStreet|3}"
     }
-    
+
+    HighStreet() {
+        return "You are on High Street. You can find odd jobs here that usually take an hour or two to complete.\n\n{Booth (2m)|HighStreetBooth|2}\n\n{Market Street (5m)|MarketStreet|5}"
+    }
+
+    HighStreetBooth() {
+        return "\"Hello, are you interested in making some money quickly? Here's a list of jobs available\"\n\n" + GenerateHighStreetJobList() + "\n\n{Leave (2m)|HighStreet|2}"
+    }
 }
 class SceneFunctions {
     ConvenienceStoreWO() {
         Jobs['ConvenienceStore'] = true
-        console.log(Jobs)
     }
     
     ConvenienceStoreWork() {
@@ -1284,7 +1344,6 @@ class SceneFunctions {
         let X = Number(args[0])
         let Y = Number(args[1])
         let Maze = MazeGen(X, Y, 3, 3, CrystalCavesLocations)
-        console.log(args)
         EndText = "You are in a cave filled with glowing white crystals.\n\n"
         if (Maze[0] != false) {
             EndText += Maze[0] + "\n\n"
@@ -1489,6 +1548,39 @@ class SceneFunctions {
             }
         }
     }
+
+    BeachExplore() {
+        let rng = GetRng()
+        let amount = RandomNumber(3) + 1
+        ChangeStat("Fatigue", 10)
+        if (rng < 800) {
+            ChangeInventory("SeaShell", amount)
+            ExtraText = "You found " + amount + " sea shells.\n" + ColorGen("d90202", "+10 Fatigue") + "\n\n"
+        } else {
+            ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + "\n\n"
+        }
+    }
+
+    HighStreetJobDo(job) {
+        //LinkSceneOverride = true
+        //SceneManager("Empty")
+        if (Stats['Fatigue'] < 100 - HighStreetJobInfo[job]['StatEffects']['Fatigue']) {
+            ExtraText = "You complete the job and get paid " + ColorGen("006400", "$" + HighStreetJobInfo[job]['Pay'])
+            if (HighStreetJobInfo[job]['StatEffects']) {
+                ExtraText += "\n"
+                for (const [effect, amt] of Object.entries(HighStreetJobInfo[job]['StatEffects'])) {
+                    ExtraText += ColorGen("d90202", "+" + amt + " " + effect)
+                    ChangeStat(effect, amt)
+                }
+            }
+            ExtraText += "\n\n{Next|HighStreetBooth|0}"
+            ChangeMoney(HighStreetJobInfo[job]['Pay'])
+        } else {
+            ExtraText = "You are too tired to complete this job.\n\n{Next|HighStreetBooth|0}"
+            ChangeTime(HighStreetJobInfo[job]['Time'] * -60)
+        }
+        HighStreetJobs.splice(HighStreetJobs.indexOf(job), 1)
+    }
 }
 const scene = new scenes()
 const scenefunctions = new SceneFunctions()
@@ -1626,7 +1718,6 @@ $("#ImportSave").click(function() {
 function SceneManager(selected) {
     let timetick = Date.now()
     var thescene = scene[selected]()
-    console.log(ExtraText)
     LoadText(thescene)
     OldScene = CurrentScene
     CurrentScene = selected
