@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.0"
+const Version = "0.12.1"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -407,6 +407,8 @@ function GetSave() {
     SaveTable['HomeUpgrades'] = HomeUpgrades
     SaveTable['DailySubs'] = DailySubs
     SaveTable['Achievements'] = Achievements
+    SaveTable['HighStreetJobs'] = HighStreetJobs
+    SaveTable['HighStreetJobReset'] = HighStreetJobReset
     document.getElementById("SaveText").value = btoa(JSON.stringify(SaveTable))
 }
 
@@ -448,6 +450,8 @@ function LoadSave() {
     Achievements.forEach(function(val) {
         AwardAchievement(val)
     })
+    HighStreetJobs = SaveTable['HighStreetJobs']
+    HighStreetJobReset = SaveTable['HighStreetJobReset']
     document.getElementById("STAT_day").textContent = "Day: " + Day
     document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
     SceneManager(CurrentScene)
@@ -455,10 +459,10 @@ function LoadSave() {
     $("#Saves").hide()
 }
 
-function SkillCheck(SkillTable) {
+function SkillCheck(SkillDict) {
     var Missing = []
-    for (var key of Object.keys(SkillTable)) {
-        if (Skills[key] < SkillTable[key]) {
+    for (var key of Object.keys(SkillDict)) {
+        if (Skills[key] < SkillDict[key]) {
             Missing.push(key)
         }
     }
@@ -546,7 +550,7 @@ function GenerateHighStreetJobList() {
         for (let i = 0; i < 5; i++) {
             let Key = HighStreetJobInfoKeys[Math.floor(HighStreetJobInfoKeys.length * Math.random())]
             let Chosen = HighStreetJobInfo[Key]
-            TextGen += "{" + Key + "|Empty|" + (Chosen['Time'] * 60) + "|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
+            TextGen += "{" + Key + "|Empty|0|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
             TextGen += Chosen['Time'] == 1 ? Chosen['Time'] + "hr" : Chosen['Time'] + "hrs"
             if (Chosen['Req']) {
                 TextGen += " | "
@@ -560,7 +564,7 @@ function GenerateHighStreetJobList() {
     } else {
         HighStreetJobs.forEach(function(Key) {
             let Chosen = HighStreetJobInfo[Key]
-            TextGen += "{" + Key + "|Empty|" + (Chosen['Time'] * 60) + "|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
+            TextGen += "{" + Key + "|Empty|0|HighStreetJobDo(" + Key + ")} | " + ColorGen("006400", "$" + Chosen['Pay']) + " | "
             TextGen += Chosen['Time'] == 1 ? Chosen['Time'] + "hr" : Chosen['Time'] + "hrs"
             if (Chosen['Req']) {
                 TextGen += " | "
@@ -1564,6 +1568,10 @@ class SceneFunctions {
     HighStreetJobDo(job) {
         //LinkSceneOverride = true
         //SceneManager("Empty")
+        if (HighStreetJobInfo[job]['Req'] && SkillCheck(HighStreetJobInfo[job]['Req']).length > 0) {
+            ExtraText = "You do not have the required skills to complete this job.\n\n{Back|HighStreetBooth|0}"
+            return
+        }
         if (Stats['Fatigue'] < 100 - HighStreetJobInfo[job]['StatEffects']['Fatigue']) {
             ExtraText = "You complete the job and get paid " + ColorGen("006400", "$" + HighStreetJobInfo[job]['Pay'])
             if (HighStreetJobInfo[job]['StatEffects']) {
@@ -1574,10 +1582,10 @@ class SceneFunctions {
                 }
             }
             ExtraText += "\n\n{Next|HighStreetBooth|0}"
+            ChangeTime(HighStreetJobInfo[job]['Time'] * 60)
             ChangeMoney(HighStreetJobInfo[job]['Pay'])
         } else {
             ExtraText = "You are too tired to complete this job.\n\n{Next|HighStreetBooth|0}"
-            ChangeTime(HighStreetJobInfo[job]['Time'] * -60)
         }
         HighStreetJobs.splice(HighStreetJobs.indexOf(job), 1)
     }
