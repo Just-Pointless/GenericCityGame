@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.1"
+const Version = "0.12.2"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -409,36 +409,37 @@ function GetSave() {
     SaveTable['Achievements'] = Achievements
     SaveTable['HighStreetJobs'] = HighStreetJobs
     SaveTable['HighStreetJobReset'] = HighStreetJobReset
-    document.getElementById("SaveText").value = btoa(JSON.stringify(SaveTable))
+    return btoa(JSON.stringify(SaveTable))
 }
 
-function LoadSave() {
-    let SaveTable = JSON.parse(atob(document.getElementById("SaveText").value))
-    Money = SaveTable['Money']
-    Time = SaveTable['Time']
-    Day = SaveTable['Day']
-    WeekDay = SaveTable['WeekDay']
-    YearDay = SaveTable['YearDay']
-    TotalTime = SaveTable['TotalTime']
-    Jobs = SaveTable['Jobs']
-    Stats = SaveTable['Stats']
-    Debt = SaveTable['Debt']
-    DebtDue = SaveTable['DebtDue']
-    Tutorials = SaveTable['Tutorials']
-    Skills = SaveTable['Skills']
-    SkillXp = SaveTable['SkillXp']
-    Cooldowns = SaveTable['Cooldowns']
-    Inventory = SaveTable['Inventory']
-    OfficeRank = SaveTable['OfficeRank']
-    OfficePromotionXP = SaveTable['OfficePromotionXP']
-    OldScene = SaveTable['OldScene']
-    CurrentScene = SaveTable['CurrentScene']
-    Secrets = SaveTable['Secrets']
-    Enemy = SaveTable['Enemy']
-    Checks = SaveTable['Checks']
-    HomeUpgrades = SaveTable['HomeUpgrades']
-    DailySubs = SaveTable['DailySubs']
-    Achievements = SaveTable['Achievements']
+function LoadSave(Save) {
+    let timetick = Date.now()
+    let SaveTable = JSON.parse(atob(Save))
+    UndefinedCheck("Money", SaveTable['Money'])
+    UndefinedCheck("Time", SaveTable['Time'])
+    UndefinedCheck("Day", SaveTable['Day'])
+    UndefinedCheck("WeekDay", SaveTable['WeekDay'])
+    UndefinedCheck("YearDay", SaveTable['YearDay'])
+    UndefinedCheck("TotalTime", SaveTable['TotalTime'])
+    UndefinedCheck("Jobs", SaveTable['Jobs'])
+    UndefinedCheck("Stats", SaveTable['Stats'])
+    UndefinedCheck("Debt", SaveTable['Debt'])
+    UndefinedCheck("DebtDue", SaveTable['DebtDue'])
+    UndefinedCheck("Tutorials", SaveTable['Tutorials'])
+    UndefinedCheck("Skills", SaveTable['Skills'])
+    UndefinedCheck("SkillXp", SaveTable['SkillXp'])
+    UndefinedCheck("Cooldowns", SaveTable['Cooldowns'])
+    UndefinedCheck("Inventory", SaveTable['Inventory'])
+    UndefinedCheck("OfficeRank", SaveTable['OfficeRank'])
+    UndefinedCheck("OfficePromotionXP", SaveTable['OfficePromotionXP'])
+    UndefinedCheck("OldScene", SaveTable['OldScene'])
+    UndefinedCheck("CurrentScene", SaveTable['CurrentScene'])
+    UndefinedCheck("Secrets", SaveTable['Secrets'])
+    UndefinedCheck("Enemy", SaveTable['Enemy'])
+    UndefinedCheck("Checks", SaveTable['Checks'])
+    UndefinedCheck("HomeUpgrades", SaveTable['HomeUpgrades'])
+    UndefinedCheck("DailySubs", SaveTable['DailySubs'])
+    UndefinedCheck("Achievements", SaveTable['Achievements'])
     for (var achievement of Object.keys(AchievementData)) {
         document.getElementById(achievement.replace(" ", "-")).firstChild.style.color = "white"
         document.getElementById(achievement.replace(" ", "-")).lastChild.style.color = "white"
@@ -450,13 +451,14 @@ function LoadSave() {
     Achievements.forEach(function(val) {
         AwardAchievement(val)
     })
-    HighStreetJobs = SaveTable['HighStreetJobs']
-    HighStreetJobReset = SaveTable['HighStreetJobReset']
+    UndefinedCheck("HighStreetJobs", SaveTable['HighStreetJobs'])
+    UndefinedCheck("HighStreetJobReset", SaveTable['HighStreetJobReset'])
     document.getElementById("STAT_day").textContent = "Day: " + Day
     document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
     SceneManager(CurrentScene)
     SavesHidden = true
-    $("#Saves").hide()
+    document.getElementById("Saves").style.display = "none"
+    console.log("Loaded save in " + String(Date.now() - timetick) + "ms")
 }
 
 function SkillCheck(SkillDict) {
@@ -578,6 +580,12 @@ function GenerateHighStreetJobList() {
     return TextGen
 }
 
+function UndefinedCheck(update, value) {
+    if (value != undefined) {
+        window[update] = value
+    }
+}
+
 // SCENES
 class scenes {
     Test() {
@@ -632,12 +640,12 @@ class scenes {
             if (Tutorials['Banker'] == true) {
                 if (Day >= 3) {
                     if (Tutorials['SteveIntro']) {
-                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Steve's apartment (1m)|ApartmentSteveRoom|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Steve's apartment (1m)|ApartmentSteveRoom|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                     } else {
-                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                        return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                     }
                 } else {
-                    return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls has peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                    return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                 }
             } else if (Day >= 5 && !Tutorials['SteveIntro']) {
                 Tutorials['SteveIntro'] = true
@@ -1594,19 +1602,19 @@ const scene = new scenes()
 const scenefunctions = new SceneFunctions()
 // SETUP
 var SidebarShown = true
-$("#SidebarToggle").click(function(e) {
+document.getElementById("SidebarToggle").addEventListener("click", function() {
     console.log("Sidebar Toggled")
     if (SidebarShown) {
-        $("#Sidebar").hide()
-        $("#SidebarToggle").css("left","0px")
-        $("#Main").css("left","0px")
-        $("#SidebarToggle").html(">")
+        document.getElementById("Sidebar").style.display = "none"
+        document.getElementById("SidebarToggle").style.left = "0px"
+        document.getElementById("Main").style.left = "0px"
+        document.getElementById("SidebarToggle").textContent = ">"
         SidebarShown = false
     } else {
-        $("#Sidebar").show()
-        $("#SidebarToggle").css("left","307px")
-        $("#Main").css("left","300px")
-        $("#SidebarToggle").html("<")
+        document.getElementById("Sidebar").style.display = "block"
+        document.getElementById("SidebarToggle").style.left = "307px"
+        document.getElementById("Main").style.left = "300px"
+        document.getElementById("SidebarToggle").textContent = "<"
         SidebarShown = true
     }
 })
@@ -1638,7 +1646,7 @@ function LoadText(text) {
         document.getElementById("Main").appendChild(div)
         if (num <= SplitLinks.length - 1) {
             button = document.createElement("button")
-            console.log(SplitLinks[num][1])
+            //console.log(SplitLinks[num][1])
             button.innerHTML = SplitLinks[num][1]
             button.className = "MainLink"
             button.id = "Button" + num
@@ -1675,52 +1683,70 @@ function LoadText(text) {
         EndText = ""
     }
 }
-$("#InventoryButton").click(function() {
+document.getElementById("InventoryButton").addEventListener("click", function() {
     if (InventoryHidden == true) {
         InventoryHidden = false
-        $("#Inventory").show()
+        document.getElementById("Inventory").style.display = "block"
     } else {
         InventoryHidden = true
-        $("#Inventory").hide()
+        document.getElementById("Inventory").style.display = "none"
     }
 })
 
-$("#StatsButton").click(function() {
+document.getElementById("StatsButton").addEventListener("click", function() {
     if (StatsHidden == true) {
         StatsHidden = false
-        $("#Stats").show()
+        document.getElementById("Stats").style.display = "block"
     } else {
         StatsHidden = true
-        $("#Stats").hide()
+        document.getElementById("Stats").style.display = "none"
     }
 })
 
-$("#SavesButton").click(function() {
+document.getElementById("SavesButton").addEventListener("click", function() {
     if (SavesHidden == true) {
         SavesHidden = false
-        $("#Saves").show()
+        document.getElementById("Saves").style.display = "block"
     } else {
         SavesHidden = true
-        $("#Saves").hide()
+        document.getElementById("Saves").style.display = "none"
     }
 })
 
-$("#AchievementsButton").click(function() {
+document.getElementById("AchievementsButton").addEventListener("click", function() {
     if (AchievementsHidden == true) {
         AchievementsHidden = false
-        $("#Achievements").show()
+        document.getElementById("Achievements").style.display = "block"
     } else {
         AchievementsHidden = true
-        $("#Achievements").hide()
+        document.getElementById("Achievements").style.display = "none"
     }
 })
 
-$("#ExportSave").click(function() {
-    GetSave()
+document.getElementById("ExportSave").addEventListener("click", function() {
+    document.getElementById("SaveText").value = GetSave()
 })
 
-$("#ImportSave").click(function() {
-    LoadSave()
+document.getElementById("ImportSave").addEventListener("click", function() {
+    if (document.getElementById("SaveText").value != "") {
+        LoadSave(document.getElementById("SaveText").value)
+    } else {
+        alert("Blank save.")
+    }
+})
+
+document.getElementById("SaveGame").addEventListener("click", function() {
+    localStorage.setItem("save", GetSave())
+    alert("Saved game. Reminder that saves have to be manually loaded using the save menu as this game is in development.")
+})
+
+document.getElementById("LoadSave").addEventListener("click", function() {
+    let tempsave = localStorage.getItem("save")
+    if (tempsave != null) {
+        LoadSave(tempsave)
+    } else {
+        alert("No save found")
+    }
 })
 
 function SceneManager(selected) {
@@ -1730,7 +1756,7 @@ function SceneManager(selected) {
     OldScene = CurrentScene
     CurrentScene = selected
     document.getElementById("Money").textContent = "$" + Money
-    console.log("Loaded scene " + selected + " in " + String(Date.now() - timetick))
+    console.log("Loaded scene " + selected + " in " + String(Date.now() - timetick) + "ms")
 }
 
 SceneManager("Menu")
