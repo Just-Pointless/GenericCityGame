@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.2"
+const Version = "0.12.3"
 document.getElementById("GameTitle").textContent = `GCG v${Version}`
 // VARIABLES
 var Money = 0
@@ -275,7 +275,6 @@ function ChangeInventory(item, increment) {
         div.className = "PopupItems"
         div.id = "INVENTORYITEM_" + item
         document.getElementById("InventoryItems").appendChild(div)
-        
     }
 }
 
@@ -451,6 +450,23 @@ function LoadSave(Save) {
     Achievements.forEach(function(val) {
         AwardAchievement(val)
     })
+
+    for (let key of Object.keys(Skills)) {
+        document.getElementById("STAT_" + key).textContent = key + ": " + Skills[key] + " (" + SkillXp[key] + " XP)"
+    }
+
+    while (document.getElementById("InventoryItems").firstChild) {
+        document.getElementById("InventoryItems").removeChild(document.getElementById("InventoryItems").lastChild)
+    }
+
+    for (let item of Object.keys(Inventory)) {
+        div = document.createElement("div")
+        div.textContent = ItemData[item]['Name'] + ": " + Inventory[item]
+        div.className = "PopupItems"
+        div.id = "INVENTORYITEM_" + item
+        document.getElementById("InventoryItems").appendChild(div)
+    }
+    
     UndefinedCheck("HighStreetJobs", SaveTable['HighStreetJobs'])
     UndefinedCheck("HighStreetJobReset", SaveTable['HighStreetJobReset'])
     document.getElementById("STAT_day").textContent = "Day: " + Day
@@ -641,15 +657,15 @@ class scenes {
                 if (Day >= 3) {
                     if (Tutorials['SteveIntro']) {
                         return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Steve's apartment (1m)|ApartmentSteveRoom|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
+                    } else if (Day >= 5 && !Tutorials['SteveIntro']) {
+                        Tutorials['SteveIntro'] = true
+                        return "A tall man with glasses approaches you.\n\n\"Hello, my name is Steve. I noticed that you recently moved in so i brought some gifts for you. Feel free to knock on my door any time if you need help with anything.\"\n\n{Next|ApartmentHall|0}"                    
                     } else {
                         return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                     }
                 } else {
                     return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                 }
-            } else if (Day >= 5 && !Tutorials['SteveIntro']) {
-                Tutorials['SteveIntro'] = true
-                return "A tall man with glasses approaches you.\n\n\"Hello, my name is Steve. I noticed that you recently moved in so i brought some gifts for you. Feel free to knock on my door any time if you need help with anything.\"\n\n{Next|ApartmentHall|0}"
             } else {
                 Tutorials['Banker'] = true
                 return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ", You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
@@ -1747,6 +1763,10 @@ document.getElementById("LoadSave").addEventListener("click", function() {
     } else {
         alert("No save found")
     }
+})
+
+document.getElementById("SaveText").addEventListener("focus", function() {
+    document.getElementById("SaveText").select()
 })
 
 function SceneManager(selected) {
