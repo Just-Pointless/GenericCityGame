@@ -1,11 +1,11 @@
 /* 
 Hi uh if your reading this im assuming you are gonna look through the code
 Anyway just a few things to note
-1. I started working on GCG a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
+1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
 const Version = "0.12.3"
-document.getElementById("GameTitle").textContent = `GCG v${Version}`
+document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
 var Time = 420
@@ -617,7 +617,7 @@ class scenes {
     }
     
     Tutorial() {
-        return "Welcome to Generic City Game.\nImportant reminder that this game is not finished yet so there may be changes made in the future. You also have to manually save for now (intentional)\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nPress the blue text below to continue.\n{Next|Home|0}"
+        return "Welcome to Texcity.\nImportant reminder that this game is not finished yet so there may be changes made in the future. You also have to manually save for now (intentional)\nThere is no predefined objective yet so you can try to earn as much money as possible.\n\nthe duration of each action is usually shown in brackets after the blue text.\ne.g. (30m) (1h 15m)\n\nPress the blue text below to continue.\n{Next|Home|0}"
     }
     
     Home() {
