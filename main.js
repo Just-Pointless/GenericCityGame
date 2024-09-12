@@ -911,9 +911,9 @@ class scenes {
     ForestLayer2() {
         if (Skills['Foraging'] >= 4) {
             if (Stats['Fatigue'] < 100) {
-                return "You are in the forest. Trees block the sunlight making the area darker.\n\n{Look for berries (20m)|ForestLayer2|20|ForestGather(2)}\n\n{Walk towards the exit (20m)|ForestLayer1|20\n{Walk towards the center (20m)|ForestLayer2|20}"
+                return "You are in the forest. Trees block the sunlight making the area darker.\n\n{Look for berries (20m)|ForestLayer2|20|ForestGather(2)}\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
             } else {
-                return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the exit (20m)|ForestLayer1|20\n{Walk towards the center (20m)|ForestLayer2|20}"
+                return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
             }
         } else {
             return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("ffa500", "Requires: Foraging 4") + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
