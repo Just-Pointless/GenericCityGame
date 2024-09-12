@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.3"
+const Version = "0.12.4"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -659,7 +659,7 @@ class scenes {
                         return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Steve's apartment (1m)|ApartmentSteveRoom|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                     } else if (Day >= 5 && !Tutorials['SteveIntro']) {
                         Tutorials['SteveIntro'] = true
-                        return "A tall man with glasses approaches you.\n\n\"Hello, my name is Steve. I noticed that you recently moved in so i brought some gifts for you. Feel free to knock on my door any time if you need help with anything.\"\n\n{Next|ApartmentHall|0}"                    
+                        return "A tall man with glasses approaches you.\n\n\"Hello, my name is Steve. I noticed that you recently moved in so I brought some gifts for you. Feel free to knock on my door any time if you need help with anything.\"\n\n{Next|ApartmentHall|0}"                    
                     } else {
                         return "You are in the hall of your apartment block. One of the lights is constantly flickering and some of the paint on the walls have peeled off.\n\n{Your apartment (1m)|Home|1}\n{Check mailbox (2m)|ApartmentHallMailbox|2}\n\n{Go outside (1m)|MeadowbrookStreet|1}"
                     }
@@ -668,7 +668,7 @@ class scenes {
                 }
             } else {
                 Tutorials['Banker'] = true
-                return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ", You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
+                return "As you step out of your apartment a skinny man with a black bowler hat approaches you.\n\n\"Greetings, we've met before. I'm here to remind you about your outstanding balance of $10000, with a payment of $100 due this week. If you've forgotten, our bank is at " + ColorGen("ffd700", "Crestwood Street") + ". You can visit at any time to inquire about the remaining amount you owe.\"\n\n{Next|ApartmentHall|0}"
             }
         }
     }
@@ -682,7 +682,7 @@ class scenes {
     }
 
     ApartmentSteveRoom() {
-        return "You knock on steve's door and enter his apartment. You notice a large rack filled with computers.\n\n{Talk (10m)|Empty|10|SteveTalk}\n{Ask question|ApartmentSteveRoomQuestion|0}\n\n{Leave (1m)|ApartmentHall|1}"
+        return "You knock on Steve's door and enter his apartment. You notice a large rack filled with computers.\n\n{Talk (10m)|Empty|10|SteveTalk}\n{Ask question|ApartmentSteveRoomQuestion|0}\n\n{Leave (1m)|ApartmentHall|1}"
     }
 
     ApartmentSteveRoomQuestion() {
@@ -694,7 +694,7 @@ class scenes {
     
     ApartmentSteveRoomCryptoIntro() {
         Tutorials['SteveCrypto'] = true
-        return "\"Alright, you can buy them from the " + ColorGen("ffd700", "Technology Store") + ".\"\nAfter that steve shows you how to use them.\n\n{Next|ApartmentSteveRoom|0}"
+        return "\"Alright, you can buy them from the " + ColorGen("ffd700", "Technology Store") + ".\"\nAfter that Steve shows you how to use them.\n\n{Next|ApartmentSteveRoom|0}"
     }
 
     SchoolLetter1() {
@@ -707,7 +707,7 @@ class scenes {
         if (Time > 360 && Time < 900 && Day >= 2) {
             Temp1 = "{Buy newspaper ($2)|Empty|5|NewsManager(Paper)}\n"
         }
-        return "You are on Meadowbrook Street, a slightly poorer part of town. There are very few cars on this road. You hear the distant hum of traffic.\n\n{Apartment block (1m)|ApartmentHall|1}\n" + Temp1 + "{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
+        return "You are on Meadowbrook Street, a slightly poorer part of town. There are very few cars on this road.\n\n{Apartment block (1m)|ApartmentHall|1}\n" + Temp1 + "{Convenience Store (1m)|ConvenienceStore|1}\n\n{Crestwood Street (5m)|CrestwoodStreet|5}\n{Lunar Road (5m)|LunarRoad|5}"
     }
     
     ConvenienceStore() {
@@ -723,7 +723,7 @@ class scenes {
     }
     
     ConvenienceStoreWO1() {
-        return "You patiently wait in the convenience store for five minutes until the manager arrives.\nHe's willing to give you a job on the spot as they are heavily understaffed.\nThe pay is $3/hr which is definitely below minimum wage but atleast it's something.\n\n{Accept (10m)|ConvenienceStoreWO2|10|ConvenienceStoreWO}\n{Refuse|ConvenienceStore|0}"
+        return "You patiently wait in the convenience store for five minutes until the manager arrives.\nHe's willing to give you a job on the spot as they are heavily understaffed.\nThe pay is $3/hr which is definitely below minimum wage but at least it's something.\n\n{Accept (10m)|ConvenienceStoreWO2|10|ConvenienceStoreWO}\n{Refuse|ConvenienceStore|0}"
     }
     
     ConvenienceStoreWO2() {
@@ -735,7 +735,7 @@ class scenes {
     }
     
     CrestwoodStreet() {
-        return "You are on Crestwood street, a more wealthy part of town with tall offices and banks. As expected there's the constant sound of honking from cars stuck in traffic.\n\n{Bank (1m)|Bank|1}\n{Office (1m)|Office|1}\n{Fast Food Restaurant (2m)|FastFoodRestaurant|2}\n{Technology Store (2m)|TechnologyStore|2}\n\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Market Street (10m)|MarketStreet|10}"
+        return "You are on Crestwood street, a more wealthy part of town with tall offices and banks. As expected, there's the constant sound of honking from cars stuck in traffic.\n\n{Bank (1m)|Bank|1}\n{Office (1m)|Office|1}\n{Fast Food Restaurant (2m)|FastFoodRestaurant|2}\n{Technology Store (2m)|TechnologyStore|2}\n\n{Meadowbrook Street (5m)|MeadowbrookStreet|5}\n{Market Street (10m)|MarketStreet|10}"
     }
     
     Bank() {
@@ -752,15 +752,17 @@ class scenes {
     
     BankPayDebt() {
         if (Money >= DebtDue) {
-            return "\"Good " + GetTimeName(true) + " are you here to pay off your debt? We only accept payment for the full week.\"\n\n{Pay (10m)|Bank|10|DebtPay}\n{Leave|Bank|1}"
+            return "\"Good " + GetTimeName(true) + ", are you here to pay off your debt? We only accept payment for the full week.\"\n\n{Pay (10m)|Bank|10|DebtPay}\n{Leave|Bank|1}"
         } else {
-            return "\"Good " + GetTimeName(true) + " are you here to pay off your debt? We only accept payment for the full week.\"\n\n" + ColorGen("d90202", "Not enough money") + "\n{Leave|Bank|1}"
+            return "\"Good " + GetTimeName(true) + ", are you here to pay off your debt? We only accept payment for the full week.\"\n\n" + ColorGen("d90202", "Not enough money") + "\n{Leave|Bank|1}"
         }
     }
     
     Office() {
         if (Time <= 570 && Time >= 510 && Jobs['Office'] == true && WeekDay < 6) {
             return "You are in the office. It's well lit with a marble floor. You are unable to tell what company this office is owned by.\n\n{Work (8h)|OfficeWorkEntry|0}\n{Receptionist (2m)|OfficeReceptionist|2}\n\n{Leave (1m)|CrestwoodStreet|1}"    
+        } else if (Jobs['Office'] == true) {
+            return "You are in the office. It's well lit with a marble floor. You are unable to tell what company this office is owned by.\n\n" + ColorGen("d90202", "You can only start work between 8:30 and 9:30 on weekdays.") + "\n{Receptionist (2m)|OfficeReceptionist|2}\n\n{Leave (1m)|CrestwoodStreet|1}"    
         } else {
             return "You are in the office. It's well lit with a marble floor. You are unable to tell what company this office is owned by.\n\n{Receptionist (2m)|OfficeReceptionist|2}\n\n{Leave (1m)|CrestwoodStreet|1}"
         }
@@ -784,14 +786,14 @@ class scenes {
     
     OfficeWO2() {
         Jobs['Office'] = true
-        return "Upon completion she gives you some infomation about your job. \"You will be sorting files for our company. Note that you can only begin working at 9am on weekdays\"\n\n{Next|Office|0}"
+        return "Upon completion she gives you some information about your job. \"You will be sorting files for our company. Note that you can only begin working at 8:30 to 9:30 on weekdays\"\n\n{Next|Office|0}"
     }
     
     OfficeWorkEntry() {
         if (OfficePromotionXP < OfficeRanks[OfficeRank]['Promotion']) {
-            return "Since your desk is on the 3rd floor you take the staircase to get there as it's more efficient.\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
+            return "Since your desk is on the 3rd floor, you take the staircase to get there as it's more efficient.\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         } else {
-            return "Since your desk is on the 3rd floor you take the staircase to get there as it's more efficient.\n\n{Request Promotion|OfficePromotion|0}\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
+            return "Since your desk is on the 3rd floor, you take the staircase to get there as it's more efficient.\n\n{Request Promotion|OfficePromotion|0}\n\n{Next|OfficeWorkMid|0|OfficeWorkManager(1)}"
         }
     }
 
@@ -805,7 +807,7 @@ class scenes {
         if (OfficeRanks[OfficeRank]['Promotion'] <= OfficePromotionXP) {
             EndText = "\n\nYou can request for a promotion the next time you work if you have the required skills."
         }
-        return "You finish your 8 hour shift and head down to the first floor. It is extremely crowded with thousands of employees leaving the building. You were paid " + ColorGen("006400", "$" + 8 * OfficeRanks[OfficeRank]['Pay']) + " upon leaving the building.\n\n" + InfoText("Office") + "\n\n{Next|CrestwoodStreet|0}"
+        return "You finish your 8 hour shift and head down to the first floor. It is extremely crowded with hundreds of employees leaving the building. You were paid " + ColorGen("006400", "$" + 8 * OfficeRanks[OfficeRank]['Pay']) + " upon leaving the building.\n\n" + InfoText("Office") + "\n\n{Next|CrestwoodStreet|0}"
     }
     
     OfficePromotion() {
@@ -838,25 +840,25 @@ class scenes {
     }
     
     FastFoodRestaurantWO1() {
-        return "A man in a black suit walks out the back door and heads towards you \n\"You are looking for work right? Follow me\"\n\n{Next|FastFoodRestaurantWO2|0}"
+        return "A man in a black suit walks out the back door and heads towards you.\n\"You are looking for work right? Follow me\"\n\n{Next|FastFoodRestaurantWO2|0}"
     }
     
     FastFoodRestaurantWO2() {
         if (Skills['Communication'] < 3) {
-            return "After entering the room he asks you a few questions\n\n\"Are you good at communicating with customers?\"\n\n" + ColorGen("ffa500", "Requires: Communication 3") + "\n{No|FastFoodRestaurantWO3B|0}"
+            return "After entering the room he asks you a few questions.\n\n\"Are you good at communicating with customers?\"\n\n" + ColorGen("ffa500", "Requires: Communication 3") + "\n{No|FastFoodRestaurantWO3B|0}"
         } else {
-            return "After entering the room he asks you a few questions\n\n\"Are you good at communicating with customers?\"\n\n{Yes|FastFoodRestaurantWO3A|0}\n{No|FastFoodRestaurantWO3B|0}"
+            return "After entering the room he asks you a few questions.\n\n\"Are you good at communicating with customers?\"\n\n{Yes|FastFoodRestaurantWO3A|0}\n{No|FastFoodRestaurantWO3B|0}"
         }
         
     }
     
     FastFoodRestaurantWO3A() {
         Jobs['FastFood'] = true
-        return "\"Great, you can begin working at any time, your pay starts at $5 per hour. You also get to keep any tips that you recieve.\"\n\n{Continue|FastFoodRestaurant|0}"
+        return "\"Great, you can begin working at any time, your pay starts at $5 per hour. You also get to keep any tips that you receive.\"\n\n{Continue|FastFoodRestaurant|0}"
     }
     
     FastFoodRestaurantWO3B() {
-        return "\"Well thats unfortunate, but don't worry you can always come back at any time after you improved your skills.\"\n\n{Continue|FastFoodRestaurant|0}"
+        return "\"Well thats unfortunate, but don't worry you can always come back at any time after you have improved your skills.\"\n\n{Continue|FastFoodRestaurant|0}"
     }
     
     TechnologyStore() {
@@ -900,9 +902,9 @@ class scenes {
     
     ForestLayer1() {
         if (Stats['Fatigue'] < 100) {
-            return "You are near the enterance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n{Look for berries (20m)|ForestLayer1|20|ForestGather(1)}\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
+            return "You are near the entrance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n{Look for berries (20m)|ForestLayer1|20|ForestGather(1)}\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
         } else {
-            return "You are near the enterance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
+            return "You are near the entrance of the forest. The trees stand tall but their spacing allows glimpses of sunlight to filter through.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the center (20m)|ForestLayer2|20}\n{Lunar Road (5m)|LunarRoad|5}"
         }
     }
 
@@ -1002,7 +1004,7 @@ class scenes {
     
     SchoolMathClassroom() {
         if (Time < 680 && Time > 665) {
-            return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equasions.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Math,Daydream)}"
+            return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equations.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Math,Daydream)}"
         } else {
             return "The door for the math classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1088,7 +1090,7 @@ class scenes {
     }
 
     HospitalInRoom() {
-        return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
+        return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile, you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
     }
 
     RockefellerStreet() {
