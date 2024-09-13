@@ -5,9 +5,12 @@ body {
 #Main {
     background-color: #111;
     position: fixed;
-    height: 100%;
-    width: 90%;
+    height: calc(100% - 28px);
+    width: calc(100% - 300px);
     z-index: 1;
+    top: 28px;
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
 #MainTransition {
@@ -82,7 +85,7 @@ body {
 .MainText {
     position: relative;
     left: 50px;
-    top: 100px;
+    top: 80px;
     font-family: Verdana;
     display: inline;
     white-space: pre-line;

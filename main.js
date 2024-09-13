@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.4"
+const Version = "0.12.5"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -970,11 +970,15 @@ class scenes {
     
     SchoolFloor1() {
         let NextClass = GetNextClass()
-        if (Time >= 765 && Time < 795) {
-            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{" + ColorGen("91bdff", "Canteen (3m)") + "|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
+        if ((Time >= 765 && Time < 795) || (Time >= 635 && Time < 665)) {
+            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{View Timetable|SchoolTimetable|0}\n\n{" + ColorGen("91bdff", "Canteen (3m)") + "|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
         } else {
-            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{Canteen (3m)|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
+            return "You are inside the school. It's heavily crowded. You have " + NextClass + " next.\n\n{View Timetable|SchoolTimetable|0}\n\n{Canteen (3m)|SchoolCanteen|3}\n\n{Science Classroom (2m)|SchoolScienceClassroom|2}\n{English Classroom (2m)|SchoolEnglishClassroom|2}\n{Math Classroom (2m)|SchoolMathClassroom|2}\n{Business Classroom (2m)|SchoolBusinessClassroom|2}\n{History Classroom (2m)|SchoolHistoryClassroom|2}\n{Physical Education Classroom (2m)|SchoolPEClassroom|2}\n\n{Go upstairs (3m)|SchoolFloor2|3}\n{School courtyard (3m)|SchoolYard|3}"
         }
+    }
+
+    SchoolTimetable() {
+        return "Science 9:00 - 9:45\nEnglish 9:50 - 10:35\nRecess 10:35 - 11:05\nMath 11:05 - 11:55\nBusiness 11:55 - 12:45\nLunch 12:45 - 13:15\nHistory 13:15 - 14:05\nPhysical Education 14:05 - 14:55\n{Back|SchoolFloor1|0}"
     }
 
     SchoolFloor2() {
@@ -987,7 +991,10 @@ class scenes {
     }
     
     SchoolScienceClassroom() {
-        if (Time < 550 && Time > 535) {
+        if (Time < 585 && Time > 535) {
+            if (Time > 550) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the science classroom. It has slightly damaged lab equipment and walls filled with posters illustrating scientific concepts.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Science,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Science,Daydream)}"
         } else {
             return "The door for the science classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -995,7 +1002,10 @@ class scenes {
     }
     
     SchoolEnglishClassroom() {
-        if (Time < 600 && Time > 585) {
+        if (Time < 630 && Time > 585) {
+            if (Time > 600) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the english classroom. Every table in this classroom contains a reading lamp.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(English,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(English,Daydream)}"
         } else {
             return "The door for the english classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -1003,7 +1013,10 @@ class scenes {
     }
     
     SchoolMathClassroom() {
-        if (Time < 680 && Time > 665) {
+        if (Time < 710 && Time > 665) {
+            if (Time > 680) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equations.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Math,Daydream)}"
         } else {
             return "The door for the math classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -1011,7 +1024,10 @@ class scenes {
     }
     
     SchoolBusinessClassroom() {
-        if (Time < 730 && Time > 715) {
+        if (Time < 760 && Time > 715) {
+            if (Time > 730) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the business classroom. There's multiple graphs on the wall that provides examples of a market.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Business,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Business,Daydream)}"
         } else {
             return "The door for the business classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -1019,7 +1035,10 @@ class scenes {
     }
     
     SchoolHistoryClassroom() {
-        if (Time < 810 && Time > 795) {
+        if (Time < 840 && Time > 795) {
+            if (Time > 810) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the history classroom. It contains multiple maps and timelines of important events in history.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(History,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(History,Daydream)}"
         } else {
             return "The door for the history classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -1027,7 +1046,10 @@ class scenes {
     }
     
     SchoolPEClassroom() {
-        if (Time < 860 && Time > 845) {
+        if (Time < 890 && Time > 845) {
+            if (Time > 860) {
+                ExtraText = "You are late for class.\n\n"
+            }
             return "You are in the physical education classroom. It's slightly bigger than the other classrooms as extra space is needed for the training equipment.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(PE,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(PE,Daydream)}"
         } else {
             return "The door for the physical education classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
@@ -1151,6 +1173,13 @@ class SceneFunctions {
         } else if (item == "EnergyDrink") {
             if (Money >= 15) {
                 ChangeStat("Health", -20)
+                ChangeMoney(-15)
+                if (Stats['Health'] <= 0) {
+                    ExtraText = "You pass out from drinking too many energy drinks.\n\n{Next (2h)|HospitalInRoom|120}"
+                    LinkSceneOverride = true
+                    SceneManager("Empty")
+                    return
+                }
                 if (Cooldowns['EnergyDrink'] <= TotalTime) {
                     Cooldowns['EnergyDrink'] = TotalTime + 2400
                     ChangeStat("Fatigue", -30)
@@ -1158,7 +1187,6 @@ class SceneFunctions {
                 } else {
                     ExtraText = "You bought an energy drink for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n") + ColorGen("d90202", "-20 Health\n\n")
                 }
-                ChangeMoney(-15)
             } else {
                 ExtraText = "You don't have enough money to purchase this item.\n\n"
             }
@@ -1626,12 +1654,14 @@ document.getElementById("SidebarToggle").addEventListener("click", function() {
         document.getElementById("Sidebar").style.display = "none"
         document.getElementById("SidebarToggle").style.left = "0px"
         document.getElementById("Main").style.left = "0px"
+        document.getElementById("Main").style.width = "100%"
         document.getElementById("SidebarToggle").textContent = ">"
         SidebarShown = false
     } else {
         document.getElementById("Sidebar").style.display = "block"
         document.getElementById("SidebarToggle").style.left = "307px"
         document.getElementById("Main").style.left = "300px"
+        document.getElementById("Main").style.width = "calc(100% - 300px)"
         document.getElementById("SidebarToggle").textContent = "<"
         SidebarShown = true
     }
