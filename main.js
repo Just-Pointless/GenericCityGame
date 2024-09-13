@@ -995,7 +995,7 @@ class scenes {
             if (Time > 550) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the science classroom. It has slightly damaged lab equipment and walls filled with posters illustrating scientific concepts.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Science,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Science,Daydream)}"
+            return "You are in the science classroom. It has slightly damaged lab equipment and walls filled with posters illustrating scientific concepts.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(Science,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(Science,Daydream)}"
         } else {
             return "The door for the science classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1006,7 +1006,7 @@ class scenes {
             if (Time > 600) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the english classroom. Every table in this classroom contains a reading lamp.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(English,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(English,Daydream)}"
+            return "You are in the english classroom. Every table in this classroom contains a reading lamp.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(English,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(English,Daydream)}"
         } else {
             return "The door for the english classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1017,7 +1017,7 @@ class scenes {
             if (Time > 680) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equations.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Math,Daydream)}"
+            return "You are in the math classroom. There's a large whiteboard in the front of the room filled with complex equations.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(Math,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(Math,Daydream)}"
         } else {
             return "The door for the math classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1028,7 +1028,7 @@ class scenes {
             if (Time > 730) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the business classroom. There's multiple graphs on the wall that provides examples of a market.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(Business,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(Business,Daydream)}"
+            return "You are in the business classroom. There's multiple graphs on the wall that provides examples of a market.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(Business,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(Business,Daydream)}"
         } else {
             return "The door for the business classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1039,7 +1039,7 @@ class scenes {
             if (Time > 810) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the history classroom. It contains multiple maps and timelines of important events in history.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(History,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(History,Daydream)}"
+            return "You are in the history classroom. It contains multiple maps and timelines of important events in history.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(History,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(History,Daydream)}"
         } else {
             return "The door for the history classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1050,7 +1050,7 @@ class scenes {
             if (Time > 860) {
                 ExtraText = "You are late for class.\n\n"
             }
-            return "You are in the physical education classroom. It's slightly bigger than the other classrooms as extra space is needed for the training equipment.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|45|ClassManager(PE,Study)}\n{Daydream|SchoolFloor1|45|ClassManager(PE,Daydream)}"
+            return "You are in the physical education classroom. It's slightly bigger than the other classrooms as extra space is needed for the training equipment.\n\nWhat would you like to do?\n\n{Study|SchoolFloor1|0|ClassManager(PE,Study)}\n{Daydream|SchoolFloor1|0|ClassManager(PE,Daydream)}"
         } else {
             return "The door for the physical education classroom is currently locked.\n\n{Back|SchoolFloor1|0}"
         }
@@ -1058,7 +1058,7 @@ class scenes {
 
     SchoolTechnologyClassroom() {
         if (Time < 910 && Time > 895) {
-            return "You are in the technology classroom. It is filled with computers and cables.\n\nWhat would you like to do?\n\n{Study|SchoolFloor2|45|ClassManager(Technology,Study)}"
+            return "You are in the technology classroom. It is filled with computers and cables.\n\nWhat would you like to do?\n\n{Study|SchoolFloor2|0|ClassManager(Technology,Study)}"
         } else {
             return "The door for the technology classroom is currently locked.\n\n{Back|SchoolFloor2|0}"
         }
@@ -1287,79 +1287,80 @@ class SceneFunctions {
             if (Type == "Study") {
                 ChangeXp("Science", 10)
                 ChangeStat("Fatigue", 10)
-                Time = 585
+                console.log(Time)
+                ChangeTime(585 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Science XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Science", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 585
+                ChangeTime(585 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Science XP") + "\n\n"
             }
         } else if (Subject == "English") {
             if (Type == "Study") {
                 ChangeXp("English", 10)
                 ChangeStat("Fatigue", 10)
-                Time = 635
+                ChangeTime(635 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 English XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("English", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 635
+                ChangeTime(635 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 English XP") + "\n\n"
             }
         } else if (Subject == "Math") {
             if (Type == "Study") {
                 ChangeXp("Math", 10)
                 ChangeStat("Fatigue", 10)
-                Time = 715
+                ChangeTime(715 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Math XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Math", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 715
+                ChangeTime(715 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Math XP") + "\n\n"
             }
         } else if (Subject == "Business") {
             if (Type == "Study") {
                 ChangeXp("Business", 10)
                 ChangeStat("Fatigue", 10)
-                Time = 765
+                ChangeTime(765 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Business XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Business", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 765
+                ChangeTime(765 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Business XP") + "\n\n"
             }
         } else if (Subject == "History") {
             if (Type == "Study") {
                 ChangeXp("History", 10)
                 ChangeStat("Fatigue", 10)
-                Time = 845
+                ChangeTime(845 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 History XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("History", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 845
+                ChangeTime(845 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 History XP") + "\n\n"
             }
         } else if (Subject == "PE") {
             if (Type == "Study") {
                 ChangeXp("Fitness", 10)
                 ChangeStat("Fatigue", 20)
-                Time = 895
+                ChangeTime(895 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+20 Fatigue") + ColorGen("21a8d1", "\n+10 Fitness XP") + "\n\n"
             } else if (Type == "Daydream") {
                 ChangeXp("Fitness", 2)
                 ChangeStat("Fatigue", 3)
-                Time = 895
+                ChangeTime(895 - Time)
                 ExtraText = "You ignored all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+3 Fatigue") + ColorGen("21a8d1", "\n+2 Fitness XP") + "\n\n"
             }
         } else if (Subject == "Technology") {
             if (Type == "Study") {
                 ChangeXp("Technology", 10)
                 ChangeStat("Fatigue", 5)
-                Time = 945
+                ChangeTime(945 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+5 Fatigue") + ColorGen("21a8d1", "\n+10 Technology XP") + "\n\n"
             }
         }
