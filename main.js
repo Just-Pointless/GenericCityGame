@@ -1653,15 +1653,15 @@ document.getElementById("SidebarToggle").addEventListener("click", function() {
     if (SidebarShown) {
         document.getElementById("Sidebar").style.display = "none"
         document.getElementById("SidebarToggle").style.left = "0px"
-        document.getElementById("Main").style.left = "0px"
-        document.getElementById("Main").style.width = "100%"
+        document.getElementById("Main").style.left = "30px"
+        document.getElementById("Main").style.width = "calc(100% - 30px)"
         document.getElementById("SidebarToggle").textContent = ">"
         SidebarShown = false
     } else {
         document.getElementById("Sidebar").style.display = "block"
         document.getElementById("SidebarToggle").style.left = "307px"
-        document.getElementById("Main").style.left = "300px"
-        document.getElementById("Main").style.width = "calc(100% - 300px)"
+        document.getElementById("Main").style.left = "330px"
+        document.getElementById("Main").style.width = "calc(100% - 330px)"
         document.getElementById("SidebarToggle").textContent = "<"
         SidebarShown = true
     }
