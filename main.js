@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.12.5"
+const Version = "0.13.0"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -21,9 +21,9 @@ var Debt = 10000
 var DebtDue = 0
 const DebtScaling = [0, 100, 200, 300, 500, 750, 1000, 1250, 1500, 1750, 2000, 650]
 var Tutorials = {}
-var Skills = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0}
-var SkillXp = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0}
-var Cooldowns = {"Coffee": 0, "EnergyDrink": 0}
+var Skills = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0, "Lockpicking": 0}
+var SkillXp = {"Communication": 0, "Foraging": 0, "Science": 0, "English": 0, "Math": 0, "Business": 0, "History": 0, "Fitness": 0, "Technology": 0, "Lockpicking": 0}
+var Cooldowns = {}
 var Inventory = {}
 const ItemData = {
     "RedBerry": {"Name": "Red Berries", "Usable": false},
@@ -32,6 +32,7 @@ const ItemData = {
     "Moonberry": {"Name": "Moonberries", "Usable": true},
     "PurpleBerry": {"Name": "Purple Berries", "Usable": false},
     "SeaShell": {"Name": "Sea Shells", "Usable": false},
+    "Lockpick": {"Name": "Lockpick", "Usable": false},
 }
 var InventoryHidden = true
 var StatsHidden = true
@@ -425,8 +426,14 @@ function LoadSave(Save) {
     UndefinedCheck("Debt", SaveTable['Debt'])
     UndefinedCheck("DebtDue", SaveTable['DebtDue'])
     UndefinedCheck("Tutorials", SaveTable['Tutorials'])
-    UndefinedCheck("Skills", SaveTable['Skills'])
-    UndefinedCheck("SkillXp", SaveTable['SkillXp'])
+    //UndefinedCheck("Skills", SaveTable['Skills'])
+    //UndefinedCheck("SkillXp", SaveTable['SkillXp'])
+    for (let [skill, val] of Object.entries(SaveTable['Skills'])) {
+        Skills[skill] = val
+    }
+    for (let [skill, val] of Object.entries(SaveTable['SkillXp'])) {
+        SkillXp[skill] = val
+    }
     UndefinedCheck("Cooldowns", SaveTable['Cooldowns'])
     UndefinedCheck("Inventory", SaveTable['Inventory'])
     UndefinedCheck("OfficeRank", SaveTable['OfficeRank'])
@@ -439,7 +446,7 @@ function LoadSave(Save) {
     UndefinedCheck("HomeUpgrades", SaveTable['HomeUpgrades'])
     UndefinedCheck("DailySubs", SaveTable['DailySubs'])
     UndefinedCheck("Achievements", SaveTable['Achievements'])
-    for (var achievement of Object.keys(AchievementData)) {
+    for (let achievement of Object.keys(AchievementData)) {
         document.getElementById(achievement.replace(" ", "-")).firstChild.style.color = "white"
         document.getElementById(achievement.replace(" ", "-")).lastChild.style.color = "white"
         if (AchievementData[achievement]['Secret'] != undefined) {
@@ -909,34 +916,34 @@ class scenes {
     }
 
     ForestLayer2() {
+        let Temp1 = ""
+        if (Secrets['BlackwoodStreet'] == true) {
+            Temp1 = "{Blackwood Street (5m)|BlackwoodStreet|5}"
+        }
         if (Skills['Foraging'] >= 4) {
             if (Stats['Fatigue'] < 100) {
-                return "You are in the forest. Trees block the sunlight making the area darker.\n\n{Look for berries (20m)|ForestLayer2|20|ForestGather(2)}\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
+                return "You are in the forest. Trees block the sunlight making the area darker.\n\n{Look for berries (20m)|ForestLayer2|20|ForestGather(2)}" + Temp1 + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
             } else {
-                return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
+                return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("d90202", "You are too tired to look for berries") + Temp1 + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
             }
         } else {
-            return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("ffa500", "Requires: Foraging 4") + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
+            return "You are in the forest. Trees block the sunlight making the area darker.\n\n" + ColorGen("ffa500", "Requires: Foraging 4") + Temp1 + "\n\n{Walk towards the exit (20m)|ForestLayer1|20}\n{Walk towards the center (20m)|ForestLayer3|20}"
         }
     }
     
     ForestLayer3() {
         let Temp1 = ""
-        let Temp2 = ""
         if (Secrets['Ruins'] == true) {
             Temp1 = "{Ruins (10m)|ForestRuins|10}\n"
         }
-        if (Secrets['BlackwoodStreet'] == true) {
-            Temp2 = "{Blackwood Street (5m)|BlackwoodStreet|5}\n"
-        }
         if (Skills['Foraging'] >= 7) {
             if (Stats['Fatigue'] < 100) {
-                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n{Explore (20m)|ForestLayer3|20|ForestGather(3)}\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
+                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n{Explore (20m)|ForestLayer3|20|ForestGather(3)}\n\n" + Temp1 + "{Walk towards the exit (20m)|ForestLayer2|20}"
             } else {
-                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n" + ColorGen("d90202", "You are too tired to explore") + "\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
+                return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n" + ColorGen("d90202", "You are too tired to explore") + "\n\n" + Temp1 + "{Walk towards the exit (20m)|ForestLayer2|20}"
             }
         } else {
-            return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n" + ColorGen("ffa500", "Requires: Foraging 7") + "\n\n" + Temp1 + Temp2 + "{Walk towards the exit (20m)|ForestLayer2|20}"
+            return "You are near the center of the forest. There are trees everywhere. They block most of the sunlight making it hard to see.\n\n" + ColorGen("ffa500", "Requires: Foraging 7") + "\n\n" + Temp1 + "{Walk towards the exit (20m)|ForestLayer2|20}"
         }
     }
 
@@ -953,7 +960,11 @@ class scenes {
         if (rng < 100) {
             return "While walking on Blackwood Street a man attacks you.\n\n{Next|Empty|0|CombatManager(BlackwoodStreet,Thug)}"
         }
-        return "You are on Blackwood Street. Most of the buildings are in bad condition. It looks like a place with high criminal activity.\n\n{Forest (5m)|ForestLayer3|5}"
+        return "You are on Blackwood Street. Most of the buildings are in bad condition. It looks like a place with high criminal activity.\n\n{Equipment Store (5m)|BlackwoodStreetEquipmentStore|5}\n\n{Forest (5m)|ForestLayer2|5}"
+    }
+
+    BlackwoodStreetEquipmentStore() {
+        return "You are in the equipment store. There are a few tools stored in boxes.\n\n{Lockpick ($3)|BlackwoodStreetEquipmentStore|2|BlackwoodStreetEquipmentStoreBuy(Lockpick)}\n\n{Leave (5m)|BlackwoodStreet|5}"
     }
 
     OxfordStreet() {
@@ -1077,7 +1088,36 @@ class scenes {
     }
     
     ShorelineStreet() {
-        return "You are on Shoreline Street. You can access the beach from here.\n\n{Beach (5m)|Beach|5}\n{Wifi shop (2m)|WifiShop|2}\n\n{Market Street (5m)|MarketStreet|5}"
+        return "You are on Shoreline Street. You can access the beach from here.\n\n{Beach (5m)|Beach|5}\n{Wifi shop (2m)|WifiShop|2}\n{Cafe (2m)|Cafe|2}\n\n{Market Street (5m)|MarketStreet|5}"
+    }
+
+    Cafe() {
+        if (Time >= 420 && Time <= 1320) {
+            if (Checks['CafeLockpick']) {
+                delete Checks['CafeLockpick']    
+            }
+            return "You are in the cafe.\n\n{Coffee $10|Cafe|1|CafeBuy(Coffee)}\n\n{Leave (2m)|ShorelineStreet|2}" // TODO: Better desc
+        } else if (Checks['CafeLockpick']) {
+            delete Checks['CafeLockpick']
+            return "You are in the cafe.\n\n{Cash Register (1m)|CafeCashRegister|1}\n\n{Leave (2m)|ShorelineStreet|2}"
+        } else if (Inventory['Lockpick'] > 0) {
+            return "The cafe is closed.\n\n{Lockpick (10m)|Cafe|10|CafeLockpick}\n\n{Leave (2m)|ShorelineStreet|2}"
+        } else {
+            return "The cafe is closed.\n\n" + ColorGen("d90202", "You need a lockpick to lockpick the door") + "\n\n{Leave (2m)|ShorelineStreet|2}"
+        }
+    }
+
+    CafeCashRegister() {
+        if (Cooldowns['CafeCash'] <= TotalTime || !Cooldowns['CafeCash']) {
+            let tempmoney = RandomNumberFromMinMax(10, 30)
+            Cooldowns['CafeCash'] = TotalTime + 539
+            Checks['CafeLockpick'] = true
+            ChangeMoney(tempmoney)
+            return "You found " + ColorGen("006400", "$" + tempmoney) + " in the cash register.\n\n{Back|Cafe|0}"
+        } else {
+            Checks['CafeLockpick'] = true
+            return "There is no money in the cash register.\n\n{Back|Cafe|0}"
+        }
     }
     
     Beach() {
@@ -1117,7 +1157,7 @@ class scenes {
 
     RockefellerStreet() {
         if (Time >= 1140 || Time <= 240) {
-            return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to the large pub on the side of the road.\n\n{Pub (3m)|Pub|3}\n\n{Lunar Road (10m)|LunarRoad|10}"
+            return "You are on Rockefeller Street. This road is quite active at night. Most people are heading to a large pub on the side of the road.\n\n{Pub (3m)|Pub|3}\n\n{Lunar Road (10m)|LunarRoad|10}"
         } else {
             return "You are on Rockefeller Street. It's quite empty right now and all the shops here are closed.\n\n{Lunar Road (10m)|LunarRoad|10}"
         }
@@ -1159,12 +1199,12 @@ class SceneFunctions {
     ConvenienceStoreBuy(item) {
         if (item == "Coffee") {
             if (Money >= 10) {
-                if (Cooldowns['Coffee'] <= TotalTime) {
+                if (Cooldowns['Coffee'] <= TotalTime || !Cooldowns['Coffee']) {
                     Cooldowns['Coffee'] = TotalTime + 2400
                     ChangeStat("Fatigue", -25)
-                    ExtraText = "You bought coffee for " + ColorGen("006400", "$10") + "\n" + ColorGen("2eba04", " -25 Fatigue\n\n")
+                    ExtraText = "You bought a coffee for " + ColorGen("006400", "$10") + "\n" + ColorGen("2eba04", " -25 Fatigue\n\n")
                 } else {
-                    ExtraText = "You bought coffee for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n\n")
+                    ExtraText = "You bought a coffee for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n\n")
                 }
                 ChangeMoney(-10)
             } else {
@@ -1180,7 +1220,7 @@ class SceneFunctions {
                     SceneManager("Empty")
                     return
                 }
-                if (Cooldowns['EnergyDrink'] <= TotalTime) {
+                if (Cooldowns['EnergyDrink'] <= TotalTime || !Cooldowns['EnergyDrink']) {
                     Cooldowns['EnergyDrink'] = TotalTime + 2400
                     ChangeStat("Fatigue", -30)
                     ExtraText = "You bought an energy drink for " + ColorGen("006400", "$10") + "\n" + ColorGen("2eba04", " -30 Fatigue\n") + ColorGen("d90202", "-20 Health\n\n")
@@ -1232,7 +1272,10 @@ class SceneFunctions {
             } else if (rng < 650) {
                 ChangeInventory("GreenBerry", amount)
                 ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
-            } else if (rng < 700 && Time < 300) {
+            } else if (rng < 700) {
+                Secrets['BlackwoodStreet'] = true
+                ExtraText = "While looking for berries you found a hidden road.\nYou can now access Blackwood Street.\n\n"
+            } else if (rng < 750 && Time < 300) {
                 ChangeInventory("Moonberry", 1)
                 ExtraText = "You found 1 moonberry.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else {
@@ -1287,7 +1330,6 @@ class SceneFunctions {
             if (Type == "Study") {
                 ChangeXp("Science", 10)
                 ChangeStat("Fatigue", 10)
-                console.log(Time)
                 ChangeTime(585 - Time)
                 ExtraText = "You carefully listened to all the instructions your teacher gave you. After 45 minutes the bell rang and you left the classroom.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Science XP") + "\n\n"
             } else if (Type == "Daydream") {
@@ -1643,6 +1685,47 @@ class SceneFunctions {
             ExtraText = "You are too tired to complete this job.\n\n{Next|HighStreetBooth|0}"
         }
         HighStreetJobs.splice(HighStreetJobs.indexOf(job), 1)
+    }
+
+    CafeBuy(item) {
+        if (item == "Coffee") {
+            if (Money >= 10) {
+                if (Cooldowns['Coffee'] <= TotalTime) {
+                    Cooldowns['Coffee'] = TotalTime + 2400
+                    ChangeStat("Fatigue", -25)
+                    ExtraText = "You bought a coffee for " + ColorGen("006400", "$10") + "\n" + ColorGen("2eba04", " -25 Fatigue\n\n")
+                } else {
+                    ExtraText = "You bought a coffee for " + ColorGen("006400", "$10") + ColorGen("757b94", " it's not effective.\n\n")
+                }
+                ChangeMoney(-10)
+            } else {
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
+            }
+        }
+    }
+
+    BlackwoodStreetEquipmentStoreBuy(item) {
+        if (item == "Lockpick") {
+            if (Money >= 3) {
+                ChangeInventory("Lockpick", 1)
+                ExtraText = "You bought a lockpick for " + ColorGen("006400", "$3") + "\n\n"
+                ChangeMoney(-3)
+            } else {
+                ExtraText = "You don't have enough money to purchase this item.\n\n"
+            }
+        }
+    }
+
+    CafeLockpick() {
+        let rng = GetRng()
+        ChangeXp("Lockpicking", 6)
+        ChangeInventory("Lockpick", -1)
+        if (rng <= Skills['Lockpicking'] + 200) {
+            Checks['CafeLockpick'] = true
+            ExtraText = "You successfully picked the lock.\n" + ColorGen("21a8d1", "+6 Lockpicking XP") + "\n\n"
+        } else {
+            ExtraText = "You failed to pick the lock.\n" + ColorGen("21a8d1", "+6 Lockpicking XP") + "\n\n"
+        }
     }
 }
 const scene = new scenes()
