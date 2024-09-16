@@ -550,12 +550,14 @@ function BetterLog(base, num) {
 }
 
 function AwardAchievement(name) {
-    Achievements.push(name)
-    document.getElementById(name.replace(" ", "-")).firstChild.style.color = "#36a854"
-    document.getElementById(name.replace(" ", "-")).lastChild.style.color = "#36a854"
-    if (AchievementData[name]['Secret'] != undefined) {
-        document.getElementById(name.replace(" ", "-")).firstChild.textContent = name
-        document.getElementById(name.replace(" ", "-")).lastChild.textContent = AchievementData[name]['Desc']
+    if (!Achievements.includes(name)) {
+        Achievements.push(name)
+        document.getElementById(name.replace(" ", "-")).firstChild.style.color = "#36a854"
+        document.getElementById(name.replace(" ", "-")).lastChild.style.color = "#36a854"
+        if (AchievementData[name]['Secret'] != undefined) {
+            document.getElementById(name.replace(" ", "-")).firstChild.textContent = name
+            document.getElementById(name.replace(" ", "-")).lastChild.textContent = AchievementData[name]['Desc']
+        }
     }
 }
 
