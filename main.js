@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.13.0"
+const Version = "0.13.1"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -1238,7 +1238,7 @@ class SceneFunctions {
     ForestGather(depth) {
         if (depth == 1) {
             let rng = GetRng()
-            let amount = RandomNumber(7) + 3
+            let amount = RandomNumber(4) + 3
             ChangeStat("Fatigue", 10)
             ChangeXp("Foraging", 5)
             if (rng < 300) {
@@ -1262,7 +1262,7 @@ class SceneFunctions {
             }
         } else if (depth == 2) {
             let rng = GetRng()
-            let amount = RandomNumber(7) + 5
+            let amount = RandomNumber(5) + 3
             ChangeStat("Fatigue", 10)
             ChangeXp("Foraging", 7)
             if (rng < 200) {
@@ -1275,17 +1275,29 @@ class SceneFunctions {
                 ChangeInventory("GreenBerry", amount)
                 ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
             } else if (rng < 700) {
+                amount = 0
                 Secrets['BlackwoodStreet'] = true
                 ExtraText = "While looking for berries you found a hidden road.\nYou can now access Blackwood Street.\n\n"
             } else if (rng < 750 && Time < 300) {
                 ChangeInventory("Moonberry", 1)
                 ExtraText = "You found 1 moonberry.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ChangeCount("BerriesHarvested", 1)
+                if (Counts['BerriesHarvested'] >= 100) {AwardAchievement("Novice Forager")}
+                if (Counts['BerriesHarvested'] >= 500) {AwardAchievement("Forager")}
+                if (Counts['BerriesHarvested'] >= 2000) {AwardAchievement("Skilled Forager")}
             } else {
                 ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
             }
+
+            if (rng < 700) {
+                ChangeCount("BerriesHarvested", amount)
+                if (Counts['BerriesHarvested'] >= 100) {AwardAchievement("Novice Forager")}
+                if (Counts['BerriesHarvested'] >= 500) {AwardAchievement("Forager")}
+                if (Counts['BerriesHarvested'] >= 2000) {AwardAchievement("Skilled Forager")}
+            }
         } else if (depth == 3) {
             let rng = GetRng()
-            let amount = RandomNumber(7) + 8
+            let amount = RandomNumber(6) + 4
             ChangeStat("Fatigue", 10)
             ChangeXp("Foraging", 10)
             if (rng < 100) {
@@ -1298,6 +1310,7 @@ class SceneFunctions {
                 ChangeInventory("GreenBerry", amount)
                 ExtraText = "You found " + amount + " green berries.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+10 Foraging XP") + "\n\n"
             } else if (rng < 750) {
+                amount = 0
                 if (Secrets['Ruins'] == true) {
                     ExtraText = "You found some ancient ruins."
                 } else {
@@ -1307,8 +1320,18 @@ class SceneFunctions {
             } else if (rng < 800 && Time < 300) {
                 ChangeInventory("Moonberry", 1)
                 ExtraText = "You found 1 moonberry.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+7 Foraging XP") + "\n\n"
+                ChangeCount("BerriesHarvested", 1)
+                if (Counts['BerriesHarvested'] >= 100) {AwardAchievement("Novice Forager")}
+                if (Counts['BerriesHarvested'] >= 500) {AwardAchievement("Forager")}
+                if (Counts['BerriesHarvested'] >= 2000) {AwardAchievement("Skilled Forager")}
             } else {
                 ExtraText = "You found nothing.\n" + ColorGen("d90202", "+10 Fatigue") + ColorGen("21a8d1", "\n+5 Foraging XP") + "\n\n"
+            }
+            if (rng < 650) {
+                ChangeCount("BerriesHarvested", amount)
+                if (Counts['BerriesHarvested'] >= 100) {AwardAchievement("Novice Forager")}
+                if (Counts['BerriesHarvested'] >= 500) {AwardAchievement("Forager")}
+                if (Counts['BerriesHarvested'] >= 2000) {AwardAchievement("Skilled Forager")}
             }
         }
     }
