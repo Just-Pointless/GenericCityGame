@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.13.1"
+const Version = "0.13.2"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -93,6 +93,7 @@ const HighStreetJobInfo = {
 }
 const HighStreetJobInfoKeys = Object.keys(HighStreetJobInfo)
 var HighStreetJobReset = true
+var Playtime = 0
 
 const AchievementRegex = new RegExp("[a-zA-Z0-9]", "g")
 const re = new RegExp("\\{([^|{}]+)\\|([^|{}]+)\\|([0-9]+)\\|?([^|{}(]+)?\\(?([^(){}|]+)?\\)?\\}", "g")
@@ -409,6 +410,7 @@ function GetSave() {
     SaveTable['Achievements'] = Achievements
     SaveTable['HighStreetJobs'] = HighStreetJobs
     SaveTable['HighStreetJobReset'] = HighStreetJobReset
+    SaveTable['Playtime'] = Playtime
     return btoa(JSON.stringify(SaveTable))
 }
 
@@ -476,6 +478,7 @@ function LoadSave(Save) {
     
     UndefinedCheck("HighStreetJobs", SaveTable['HighStreetJobs'])
     UndefinedCheck("HighStreetJobReset", SaveTable['HighStreetJobReset'])
+    UndefinedCheck("Playtime", SaveTable['Playtime'])
     document.getElementById("STAT_day").textContent = "Day: " + Day
     document.getElementById("Day").textContent = "Day: " + Day + " " + GetDayName().substring(0,3)
     SceneManager(CurrentScene)
@@ -1945,3 +1948,19 @@ for (var achievement of Object.keys(AchievementData)) {
     parentdiv.appendChild(namediv)
     parentdiv.appendChild(descdiv)
 }
+
+function FormatTime(si) {
+    const seconds = Math.floor(Math.abs(si))
+    const h = Math.floor(seconds / 3600)
+    const m = Math.floor((seconds % 3600) / 60)
+    const s = Math.round(seconds % 60)
+    const t = [h, m > 9 ? m : h ? '0' + m : m || '0', s > 9 ? s : '0' + s]
+      .filter(Boolean)
+      .join(':')
+    return si * 1000 < 0 && seconds ? `-${t}` : t
+}
+
+setInterval(function() {
+    Playtime += 1
+    document.getElementById("STAT_Playtime").textContent = "Play Time: " + FormatTime(Playtime)
+}, 1000)
