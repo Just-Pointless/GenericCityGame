@@ -1081,7 +1081,11 @@ class scenes {
     }
 
     SchoolLibrary() {
-        return "You are in the school library. There are many educational books on the shelves.\n\n{Study Science (15m)|SchoolLibrary|15|SchoolLibraryStudy(Science)}\n{Study English (15m)|SchoolLibrary|15|SchoolLibraryStudy(English)}\n{Study Math (15m)|SchoolLibrary|15|SchoolLibraryStudy(Math)}\n{Study Business (15m)|SchoolLibrary|15|SchoolLibraryStudy(Business)}\n{Study History (15m)|SchoolLibrary|15|SchoolLibraryStudy(History)}\n\n{Leave (2m)|SchoolYard|2}"
+        if (Stats['Fatigue'] < 100) {
+            return "You are in the school library. There are many educational books on the shelves.\n\n{Study Science (15m)|SchoolLibrary|15|SchoolLibraryStudy(Science)}\n{Study English (15m)|SchoolLibrary|15|SchoolLibraryStudy(English)}\n{Study Math (15m)|SchoolLibrary|15|SchoolLibraryStudy(Math)}\n{Study Business (15m)|SchoolLibrary|15|SchoolLibraryStudy(Business)}\n{Study History (15m)|SchoolLibrary|15|SchoolLibraryStudy(History)}\n\n{Leave (2m)|SchoolYard|2}"
+        } else {
+            return "You are in the school library. There are many educational books on the shelves.\n\n" + ColorGen("d90202", "You are too tired to study") + "\n\n{Leave (2m)|SchoolYard|2}"            
+        }
     }
     
     MarketStreet() {
