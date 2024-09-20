@@ -4,7 +4,7 @@ Anyway just a few things to note
 1. I started working on Texcity a few weeks after i first started learning javascript (i know other languages) so you might notice some inconsistencies in the code
 2. I never really read or looked at any other javascript code so yeah i might have done some things differently from the standard way of doing stuff so uh if you have any suggestions let me know i guess
 */
-const Version = "0.13.2"
+const Version = "0.14.0"
 document.getElementById("GameTitle").textContent = `Texcity v${Version}`
 // VARIABLES
 var Money = 0
@@ -977,10 +977,10 @@ class scenes {
     }
     
     SchoolYard() {
-        if (Day < 2 || Time < 480 || Time > 960) {
+        if (Day < 2 || Time < 480 || Time > 960 || WeekDay >= 6) {
             return "The school gates are locked. You could probably break in if you had the required skills.\n\n{Leave (1m)|OxfordStreet|1}"
         } else {
-            return "You are in the school courtyard, it serves as a hub for social interaction.\n\n{Enter the school (3m)|SchoolFloor1|3}\n\n{Leave (3m)|OxfordStreet|3}"
+            return "You are in the school courtyard, it serves as a hub for social interaction.\n\n{Enter the school (3m)|SchoolFloor1|3}\n{Library (2m)|SchoolLibrary|2}\n\n{Leave (3m)|OxfordStreet|3}"
         }
     }
     
@@ -1079,6 +1079,10 @@ class scenes {
             return "The door for the technology classroom is currently locked.\n\n{Back|SchoolFloor2|0}"
         }
     }
+
+    SchoolLibrary() {
+        return "You are in the school library. There are many educational books on the shelves.\n\n{Study Science (15m)|SchoolLibrary|15|SchoolLibraryStudy(Science)}\n{Study English (15m)|SchoolLibrary|15|SchoolLibraryStudy(English)}\n{Study Math (15m)|SchoolLibrary|15|SchoolLibraryStudy(Math)}\n{Study Business (15m)|SchoolLibrary|15|SchoolLibraryStudy(Business)}\n{Study History (15m)|SchoolLibrary|15|SchoolLibraryStudy(History)}\n\n{Leave (2m)|SchoolYard|2}"
+    }
     
     MarketStreet() {
         return "You are on Market Street. You can sell items in your inventory here.\n\n{Fruit Buyer (2m)|MarketStreetFruitBuyer|2|StallLoader(MarketStreetFruitBuyer)}\n\n{Shoreline Street (5m)|ShorelineStreet|5}\n{Maple Street (5m)|MapleStreet|5}\n{Crestwood Street (10m)|CrestwoodStreet|10}\n{High Street (5m)|HighStreet|5}"
@@ -1149,7 +1153,7 @@ class scenes {
     }
 
     MapleStreet() {
-        return "You are on Maple Street. You can access the hospital from here.\n\n{Hospital (2m)|Hospital|2}\n\n{Market Street (5m)|MarketStreet|5}"
+        return "You are on Maple Street. You can access the hospital and gym from here.\n\n{Hospital (2m)|Hospital|2}\n{Gym (2m)|Gym|2}\n\n{Market Street (5m)|MarketStreet|5}"
     }
 
     Hospital() {
@@ -1158,6 +1162,17 @@ class scenes {
 
     HospitalInRoom() {
         return "You wake up on a bed in a hospital. There is a doctor talking to another person but you can not hear them. After awhile, you are released from the hospital. Thankfully there are no fees.\n\n{Next|Hospital|0}"
+    }
+
+    Gym() {
+        if (DailySubs['Gym']) {
+            let r = "You are in the gym." // TODO: better desc
+            r += Stats['Fatigue'] < 100 ? "\n\n{Train (30m)|Gym|30|GymTrain}" : ColorGen("d90202", "\n\nYou are too tired to train")
+            r += "\n\n{Cancel Membership|Gym|5|BuyGymMembership(n)}\n\n{Leave (2m)|MapleStreet|2}"
+            return r
+        } else {
+            return "You are in the gym. A membership is required to train.\n\n{Buy Gym Membership ($5/day)|Gym|5|BuyGymMembership(y)}\n\n{Leave (2m)|MapleStreet|2}"
+        }
     }
 
     RockefellerStreet() {
@@ -1754,6 +1769,51 @@ class SceneFunctions {
         } else {
             ExtraText = "You failed to pick the lock.\n" + ColorGen("21a8d1", "+6 Lockpicking XP") + "\n\n"
         }
+    }
+
+    SchoolLibraryStudy(subject) {
+        if (subject == "Science") {
+            ChangeXp("Science", 2)
+            ChangeStat("Fatigue", 4)
+            ExtraText = "You take a book from the science section of the library and read it.\n" + ColorGen("d90202", "+4 Fatigue") + ColorGen("21a8d1", "\n+2 Science XP") + "\n\n"
+        } else if (subject == "English") {
+            ChangeXp("English", 2)
+            ChangeStat("Fatigue", 4)
+            ExtraText = "You take a book from the english section of the library and read it.\n" + ColorGen("d90202", "+4 Fatigue") + ColorGen("21a8d1", "\n+2 English XP") + "\n\n"
+        } else if (subject == "Math") {
+            ChangeXp("Math", 2)
+            ChangeStat("Fatigue", 4)
+            ExtraText = "You take a book from the math section of the library and read it.\n" + ColorGen("d90202", "+4 Fatigue") + ColorGen("21a8d1", "\n+2 Math XP") + "\n\n"
+        } else if (subject == "Business") {
+            ChangeXp("Business", 2)
+            ChangeStat("Fatigue", 4)
+            ExtraText = "You take a book from the business section of the library and read it.\n" + ColorGen("d90202", "+4 Fatigue") + ColorGen("21a8d1", "\n+2 Business XP") + "\n\n"
+        } else if (subject == "History") {
+            ChangeXp("History", 2)
+            ChangeStat("Fatigue", 4)
+            ExtraText = "You take a book from the history section of the library and read it.\n" + ColorGen("d90202", "+4 Fatigue") + ColorGen("21a8d1", "\n+2 History XP") + "\n\n"
+        }
+    }
+
+    BuyGymMembership(yesno) {
+        if (yesno == "y") {
+            if (Money >= 5) {
+                ChangeMoney(-5)
+                DailySubs['Gym'] = 5
+                ExtraText = "You bought a gym membership. You can now train.\n\n"
+            } else {
+                ExtraText = "You don't have enough money to buy a membership.\n\n"
+            }
+        } else if (yesno == "n") {
+            delete DailySubs['Gym']
+            ExtraText = "You cancelled your gym membership.\n\n"
+        }
+    }
+
+    GymTrain() {
+        ChangeXp("Fitness", 15)
+        ChangeStat("Fatigue", 20)
+        ExtraText = "You train at the gym for 30 minutes.\n" + ColorGen("d90202", "+20 Fatigue") + ColorGen("21a8d1", "\n+15 Fitness XP") + "\n\n" // TODO: Better desc
     }
 }
 const scene = new scenes()
